@@ -3,8 +3,6 @@
 
 #include "containers/simple_vector.h"
 
-class msr_thread_dqgmres_solver;
-
 class msr_matrix
 {
 private:
@@ -13,9 +11,9 @@ private:
   simple_vector m_aa;
   std::vector<int> m_ja;
 public:
-  friend class msr_thread_dqgmres_solver;
   msr_matrix ();
   ~msr_matrix ();
+
   void dump (FILE *fout = stdout);
   void convert (const int n, simple_vector matrix);
   int n () const;

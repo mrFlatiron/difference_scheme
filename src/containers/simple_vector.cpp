@@ -58,6 +58,17 @@ simple_vector::simple_vector (const simple_vector &vect)
   m_is_owner = true;
 }
 
+simple_vector::simple_vector (simple_vector &&vect)
+{
+  m_size = vect.size ();
+  m_data = vect.data ();
+  m_is_owner = vect.m_is_owner;
+
+  vect.m_data = nullptr;
+  vect.m_size = 0;
+  vect.m_is_owner = false;
+}
+
 simple_vector &simple_vector::operator= (const simple_vector &vector)
 {
   if (m_size < vector.size ())
@@ -73,6 +84,19 @@ simple_vector &simple_vector::operator= (const simple_vector &vector)
   m_size = vector.size ();
   for (int i = 0; i < m_size; i++)
     m_data[i] = vector[i];
+
+  return *this;
+}
+
+simple_vector &simple_vector::operator= (simple_vector &&vect)
+{
+  m_size = vect.size ();
+  m_data = vect.data ();
+  m_is_owner = vect.m_is_owner;
+
+  vect.m_data = nullptr;
+  vect.m_size = 0;
+  vect.m_is_owner = false;
 
   return *this;
 }

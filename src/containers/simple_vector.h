@@ -15,7 +15,10 @@ public:
   simple_vector (double *data, const int size, const bool need_copy = false);
   explicit simple_vector (const int size);
   simple_vector (const simple_vector &vect);
+  simple_vector (simple_vector &&vect);
+
   simple_vector &operator= (const simple_vector &vector);
+  simple_vector &operator= (simple_vector &&vect);
 
   simple_vector (const std::vector<double> &stdvec);
 

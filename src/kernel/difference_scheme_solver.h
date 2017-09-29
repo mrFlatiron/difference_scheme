@@ -5,6 +5,7 @@
 
 #include "scheme_defs.h"
 #include "scheme_point.h"
+#include "scheme_iter_data.h"
 
 
 
@@ -22,6 +23,7 @@ private:
   simple_vector m_V;
   solver_state m_state;
 
+  scheme_iter_data m_iter_data;
   int m_last_computed_layer;
 public:
   difference_scheme_solver ();
@@ -35,7 +37,7 @@ public:
   double u_val (const int n, const int m) const;
 
   double val (const net_func func, const int n, const int m) const;
-  double val (const net_func func, const scheme_point p) const;
+  double val (const net_func func, scheme_point p) const;
 
   double var_incr (const variable var) const;
 
@@ -64,7 +66,7 @@ private:
   double deriv (const std::vector<net_func> &product,
                 const std::vector<deriv_type> &types,
                 const variable var,
-                const scheme_point p) const;
+                scheme_point p) const;
 };
 
 #endif // DIFFERENCE_SCHEME_SOLVER_H

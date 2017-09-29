@@ -11,7 +11,8 @@ SOURCES += \
     src/kernel/difference_scheme_solver.cpp \
     src/kernel/input/rhs_functions.cpp \
     src/kernel/input/start_functions.cpp \
-    src/kernel/scheme_point.cpp
+    src/kernel/scheme_point.cpp \
+    src/kernel/scheme_iter_data.cpp
 
 HEADERS += \
     src/containers/simple_vector.h \
@@ -23,7 +24,8 @@ HEADERS += \
     src/kernel/input/rhs_functions.h \
     src/kernel/input/start_functions.h \
     src/kernel/scheme_point.h \
-    src/kernel/scheme_defs.h
+    src/kernel/scheme_defs.h \
+    src/kernel/scheme_iter_data.h
 
 PRECOMPILED_HEADER = src/precompiled/precompiled_header.h
 

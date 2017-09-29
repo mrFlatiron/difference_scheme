@@ -191,9 +191,8 @@ void difference_scheme_solver::fill_V_borders ()
 double difference_scheme_solver::deriv (const std::vector<net_func> &product,
                                         const std::vector<deriv_type> &types,
                                         const variable var,
-                                        const scheme_point _p) const
+                                        scheme_point p) const
 {
-  scheme_point p = _p;
   if (isize (types) >= 3 ||
       isize (product) >= 3)
     {
