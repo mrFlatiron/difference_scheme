@@ -50,11 +50,17 @@ private:
   void init ();
 
   double *get_G_layer (const int layer);
+  const double *get_G_layer (const int layer) const;
+
   double *get_V_layer (const int layer);
+  const double *get_V_layer (const int layer) const;
 
   void fill_zero_layer ();
   void fill_V_borders ();
 
+
+  //for expample
+  //(GV)x\overline{x} = deriv ({net_func::G, net_func::V}, {deriv_type::fw, deriv_type::bw}, variable::x, scheme_point (n, m));
   double deriv (const std::vector<net_func> &product,
                 const std::vector<deriv_type> &types,
                 const variable var,

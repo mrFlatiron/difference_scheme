@@ -10,7 +10,7 @@ scheme_point::~scheme_point ()
 
 }
 
-scheme_point::scheme_point(const int n, const int m)
+scheme_point::scheme_point (const int n, const int m)
   : m_n (n),
     m_m (m)
 {

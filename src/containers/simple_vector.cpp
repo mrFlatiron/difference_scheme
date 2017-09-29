@@ -121,6 +121,11 @@ double *simple_vector::data ()
   return m_data;
 }
 
+const double *simple_vector::data () const
+{
+  return m_data;
+}
+
 void simple_vector::resize (const int size)
 {
   if (!m_is_owner)

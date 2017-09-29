@@ -24,6 +24,7 @@ public:
   const double &operator[] (const int i) const;
   double at (const int i) const;
   double *data ();
+  const double *data () const;
   void resize (const int size);
 };
 

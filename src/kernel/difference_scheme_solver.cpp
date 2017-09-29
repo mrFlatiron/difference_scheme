@@ -56,7 +56,7 @@ double difference_scheme_solver::u_val (const int n, const int m) const
   return get_V_layer (n)[m];
 }
 
-double difference_scheme_solver::val (const difference_scheme_solver::net_func func,
+double difference_scheme_solver::val (const net_func func,
                                       const int n,
                                       const int m) const
 {
@@ -65,7 +65,7 @@ double difference_scheme_solver::val (const difference_scheme_solver::net_func f
     case net_func::G:
       return g_val (n, m);
     case net_func::V:
-      return v_val (n, m);
+      return u_val (n, m);
     }
   DEBUG_PAUSE ("Shouldn't happen");
   return 0;
@@ -76,7 +76,7 @@ double difference_scheme_solver::val (const net_func func, const scheme_point p)
   return val (func, p.n (), p.m ());
 }
 
-double difference_scheme_solver::var_incr (const difference_scheme_solver::variable var) const
+double difference_scheme_solver::var_incr (const variable var) const
 {
   switch (var)
     {
@@ -89,7 +89,7 @@ double difference_scheme_solver::var_incr (const difference_scheme_solver::varia
   return 0;
 }
 
-difference_scheme_solver::solver_state difference_scheme_solver::state () const
+solver_state difference_scheme_solver::state () const
 {
   return m_state;
 }
@@ -151,7 +151,17 @@ double *difference_scheme_solver::get_G_layer (const int layer)
   return m_G.data () + (m_M + 1) * layer;
 }
 
+const double *difference_scheme_solver::get_G_layer (const int layer) const
+{
+  return m_G.data () + (m_M + 1) * layer;
+}
+
 double *difference_scheme_solver::get_V_layer (const int layer)
+{
+  return m_V.data () + (m_M + 1) * layer;
+}
+
+const double *difference_scheme_solver::get_V_layer (const int layer) const
 {
   return m_V.data () + (m_M + 1) * layer;
 }
@@ -165,13 +175,13 @@ void difference_scheme_solver::fill_zero_layer ()
     {
       double x = i * m_h;
       g[i] = g0 (x);
-      v[i] = v0 (x);
+      v[i] = u0 (x);
     }
 }
 
 void difference_scheme_solver::fill_V_borders ()
 {
-  for (int n = 0; n <= N; n++)
+  for (int n = 0; n <= m_N; n++)
     {
       get_V_layer (n)[0] = 0;
       get_V_layer (n)[m_M] = 0;
@@ -181,8 +191,9 @@ void difference_scheme_solver::fill_V_borders ()
 double difference_scheme_solver::deriv (const std::vector<net_func> &product,
                                         const std::vector<deriv_type> &types,
                                         const variable var,
-                                        const scheme_point p) const
+                                        const scheme_point _p) const
 {
+  scheme_point p = _p;
   if (isize (types) >= 3 ||
       isize (product) >= 3)
     {

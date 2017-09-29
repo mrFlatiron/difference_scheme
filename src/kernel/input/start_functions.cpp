@@ -13,5 +13,5 @@ double u0 (const double x)
 
 double g0 (const double x)
 {
-  return log (rho (x));
+  return log (rho0 (x));
 }
