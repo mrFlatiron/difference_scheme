@@ -106,7 +106,7 @@ double &simple_vector::operator[] (const int i)
   return m_data[i];
 }
 
-const double &simple_vector::operator[](const int i) const
+const double &simple_vector::operator[] (const int i) const
 {
   return m_data[i];
 }

@@ -1,19 +1,15 @@
 #ifndef DIFFERENCE_SCHEME_SOLVER_H
 #define DIFFERENCE_SCHEME_SOLVER_H
 
+#include "containers/simple_vector.h"
+
+#include "scheme_defs.h"
+#include "scheme_point.h"
+
+
 
 class difference_scheme_solver
 {
-public:
-  enum class solver_state
-  {
-    invalid,
-    ready,
-    in_progress,
-    solved,
-    failed
-  };
-
 private:
   int m_M;
   int m_N;
@@ -22,7 +18,11 @@ private:
   double m_mu;
   double m_h;
   double m_t;
+  simple_vector m_G;
+  simple_vector m_V;
   solver_state m_state;
+
+  int m_last_computed_layer;
 public:
   difference_scheme_solver ();
   ~difference_scheme_solver ();
@@ -31,9 +31,16 @@ public:
 
   void solve ();
 
-  double g_val (const int m, const int n) const;
-  double u_val (const int m, const int n) const;
+  double g_val (const int n, const int m) const;
+  double u_val (const int n, const int m) const;
+
+  double val (const net_func func, const int n, const int m) const;
+  double val (const net_func func, const scheme_point p) const;
+
+  double var_incr (const variable var) const;
+
   solver_state state () const;
+  int nodes_count () const;
 private:
   void make_first_system ();
   void make_second_system ();
@@ -41,6 +48,17 @@ private:
   void solve_system ();
 
   void init ();
+
+  double *get_G_layer (const int layer);
+  double *get_V_layer (const int layer);
+
+  void fill_zero_layer ();
+  void fill_V_borders ();
+
+  double deriv (const std::vector<net_func> &product,
+                const std::vector<deriv_type> &types,
+                const variable var,
+                const scheme_point p) const;
 };
 
 #endif // DIFFERENCE_SCHEME_SOLVER_H
