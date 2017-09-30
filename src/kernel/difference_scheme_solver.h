@@ -19,8 +19,8 @@ private:
   double m_mu;
   double m_h;
   double m_t;
-  simple_vector m_G;
-  simple_vector m_V;
+  std::vector<double> m_G;
+  std::vector<double> m_V;
   solver_state m_state;
 
   scheme_iter_data m_iter_data;
@@ -35,6 +35,7 @@ public:
 
   double g_val (const int n, const int m) const;
   double u_val (const int n, const int m) const;
+  double v_val (const int n, const int m) const;
 
   double val (const net_func func, const int n, const int m) const;
   double val (const net_func func, scheme_point p) const;
@@ -67,6 +68,9 @@ private:
                 const std::vector<deriv_type> &types,
                 const variable var,
                 scheme_point p) const;
+
+  void set_coef (const net_func f, const int row, const int m, const double val);
+  void set_rhs_val (const int row, const double val);
 };
 
 #endif // DIFFERENCE_SCHEME_SOLVER_H

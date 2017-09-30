@@ -1,4 +1,5 @@
 #include "msr_matrix.h"
+#include "matrix_el.h"
 
 msr_matrix::msr_matrix ()
 {
@@ -38,7 +39,7 @@ void msr_matrix::dump (FILE *fout)
   fprintf (fout, "===================\n");
 }
 
-void msr_matrix::convert (const int n, simple_vector matrix)
+void msr_matrix::construct_from (const int n, std::vector<double> matrix)
 {
   m_n = n;
   int ja_iter = m_n + 1;
@@ -111,6 +112,99 @@ void msr_matrix::convert (const int n, simple_vector matrix)
     }
 }
 
+void msr_matrix::construct_from (const std::vector<matrix_el> &els)
+{
+  std::vector<matrix_el> sorted_els = els;
+  construct_from (std::move (sorted_els));
+}
+
+void msr_matrix::construct_from (std::vector<matrix_el> &&els)
+{
+  auto msr_less = [&] (const matrix_el &a, const matrix_el &b) -> bool
+  {
+    if (a.i () == a.j () && b.i () != b.j ())
+      return true;
+
+    if (a.i () != a.j () && b.i () == b.j ())
+      return false;
+
+    if (a.i () == a.j () && b.i () == b.j ())
+      {
+        if (a.i () < b.i ())
+          return true;
+
+        if (a.i () > b.i ())
+          return false;
+
+        return false;
+      }
+
+    if (a.i () < b.i ())
+      return true;
+
+    if (a.i () > b.i ())
+      return false;
+
+    if (a.j () < b.j ())
+      return true;
+
+    if (a.j () > b.j ())
+      return false;
+
+    return false;
+  };
+
+  std::sort (els.begin (), els.end (), msr_less);
+
+  set_arr_size (isize (els) + 1);
+
+  int size = isize (els);
+
+  int matrix_size = 0;
+
+  for (int k = 0; k < size; k++)
+    if (els[k].i () == els[k].j ())
+      matrix_size++;
+
+  set_n (matrix_size);
+
+  for (int k = 0; k < matrix_size; k++)
+    m_aa[k] = els[k].val ();
+
+  m_aa[matrix_size] = 0;
+
+  if (matrix_size == size)
+    {
+      for (int k = 0; k < m_arr_size; k++)
+        m_ja[k] = m_arr_size;
+      return;
+    }
+
+  int last_found_row = -1;
+  int looking_for = 0;
+
+  int ja_iter = matrix_size + 1;
+
+  for (int k = matrix_size; k < size; k++)
+    {
+      if (last_found_row < els[k].i ())
+        {
+          last_found_row = els[k].i ();
+
+          for (int row = looking_for; row < last_found_row; row++)
+            m_ja[row] = k + 1;
+
+          m_ja[last_found_row] = k + 1;
+          looking_for = last_found_row + 1;
+        }
+      m_ja[ja_iter] = els[k].j ();
+      m_aa[ja_iter] = els[k].val ();
+      ja_iter++;
+    }
+  for (int row = last_found_row + 1; row <= looking_for; row++)
+    m_ja[row] = m_arr_size;
+}
+
 int msr_matrix::n () const
 {
   return m_n;
@@ -162,7 +256,7 @@ void msr_matrix::ja (const int i, const int val)
   m_ja[i] = val;
 }
 
-void msr_matrix::set_diagonal (const simple_vector &diag_vals)
+void msr_matrix::set_diagonal (const std::vector<double> &diag_vals)
 {
   m_n = diag_vals.size ();
   m_arr_size = m_n + 1;
@@ -175,7 +269,7 @@ void msr_matrix::set_diagonal (const simple_vector &diag_vals)
     }
 }
 
-void msr_matrix::mult_vector (const simple_vector &in, simple_vector &out)
+void msr_matrix::mult_vector (const std::vector<double> &in, std::vector<double> &out)
 {
   int n = m_n;
 
@@ -200,7 +294,7 @@ bool msr_matrix::is_symmetrical () const
       for (int ja_iter = begin; ja_iter < end; ja_iter++)
         {
           int j = ja (ja_iter);
-          if (fabs (aa (ja_iter) - ij (i, j)) > 1e-15)
+          if (fabs (aa (ja_iter) - ij (j, i)) > 1e-15)
             return false;
         }
     }
@@ -214,6 +308,7 @@ double msr_matrix::ij (const int i, const int j) const
   for (int ja_iter = begin; ja_iter < end; ja_iter++)
     if (ja (ja_iter) == j)
       return aa (ja_iter);
+  DEBUG_PAUSE ("Shouldn't happen");
   return 0;
 }
 

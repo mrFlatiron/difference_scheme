@@ -6,16 +6,26 @@
 class scheme_iter_data
 {
 private:
+  std::vector<matrix_el> m_equation_coefs;
   msr_matrix m_system;
-  simple_vector m_rhs;
+  std::vector<double> m_rhs;
   int m_iter;
 public:
   scheme_iter_data ();
   ~scheme_iter_data ();
 
   scheme_iter_data (const int N, const int M);
+
   msr_matrix &system ();
   const msr_matrix &system () const;
+
+  std::vector<matrix_el> &equation_coefs ();
+  const std::vector<matrix_el> &equation_coefs () const;
+
+  std::vector<double> &rhs ();
+  const std::vector<double> &rhs () const;
+
+  void inc_iter ();
 };
 
 #endif // SCHEME_ITER_DATA_H

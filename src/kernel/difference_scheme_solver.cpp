@@ -56,6 +56,11 @@ double difference_scheme_solver::u_val (const int n, const int m) const
   return get_V_layer (n)[m];
 }
 
+double difference_scheme_solver::v_val(const int n, const int m) const
+{
+  return u_val (n, m);
+}
+
 double difference_scheme_solver::val (const net_func func,
                                       const int n,
                                       const int m) const
@@ -96,12 +101,32 @@ solver_state difference_scheme_solver::state () const
 
 void difference_scheme_solver::make_first_system ()
 {
-
+  int row = 0; // row in system
+  int m = 0;
+  int n = m_last_computed_layer;
+  //something about m == 0;
+  //rhs
+  row++;
+  m++;
+  for (; m < m_M; m++, row++)
+    {
+      set_coef (net_func::G, row, m - 1, - g_val (n, m) / (2 * m_h));
+      set_coef (net_func::G, row, m    , (1 / m_t + 0.5 * deriv ({net_func::V}, {deriv_type::wide}, variable::x, scheme_point (n, m))));
+      set_coef (net_func::G, row, m + 1, v_val (n, m) / (2 * m_h));
+      set_coef (net_func::V, row, m + 1, 1 / (2 * m_h));
+      set_coef (net_func::V, row, m - 1, - 1 / (2 * m_h));
+      set_rhs_val (row,
+                   f0 (n * m_t, m * m_h) +
+                   g_val (n, m) *
+                   (1 / m_t + 0.5 * deriv ({net_func::V}, {deriv_type::wide}, variable::x, scheme_point (n, m))));
+    }
+  //something about m == m_M
+  //rhs
 }
 
 void difference_scheme_solver::make_second_system ()
 {
-
+  int row = m_M + 1;
 }
 
 void difference_scheme_solver::merge_systems ()
@@ -168,8 +193,8 @@ const double *difference_scheme_solver::get_V_layer (const int layer) const
 
 void difference_scheme_solver::fill_zero_layer ()
 {
-  simple_vector g (get_G_layer (0), m_M + 1);
-  simple_vector v (get_V_layer (0), m_M + 1);
+  double *g = get_G_layer (0);
+  double *v = get_V_layer (0);
 
   for (int i = 0; i <= m_M; i++)
     {
@@ -245,6 +270,26 @@ double difference_scheme_solver::deriv (const std::vector<net_func> &product,
     }
   DEBUG_PAUSE ("Shouldn't happen");
   return 0;
+}
+
+void difference_scheme_solver::set_coef (const net_func f, const int row, const int m, const double val)
+{
+  int col;
+  switch (f)
+    {
+    case net_func::G:
+      col = m;
+      break;
+    case net_func::V:
+      col = m_M + m; // (m_M + 1) + (m - 1)
+    }
+
+  m_iter_data.equation_coefs ().emplace_back (row, col, val);
+}
+
+void difference_scheme_solver::set_rhs_val (const int row, const double val)
+{
+  m_iter_data.rhs ()[row] = val;
 }
 
 int difference_scheme_solver::nodes_count () const

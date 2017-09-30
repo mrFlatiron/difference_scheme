@@ -2,20 +2,21 @@
 #define MSR_MATRIX_H
 
 #include "containers/simple_vector.h"
+#include "matrix_el.h"
 
 class msr_matrix
 {
 private:
   int m_n;
   int m_arr_size;
-  simple_vector m_aa;
+  std::vector<double> m_aa;
   std::vector<int> m_ja;
 public:
   msr_matrix ();
   ~msr_matrix ();
 
   void dump (FILE *fout = stdout);
-  void convert (const int n, simple_vector matrix);
+
   int n () const;
   void set_n (const int n);
   int arr_size () const;
@@ -24,13 +25,18 @@ public:
   void aa (const int i, const double val);
   int ja (const int i) const;
   void ja (const int i, const int val);
-  void set_diagonal (const simple_vector &diag_vals);
-  void mult_vector (const simple_vector &in, simple_vector &out);
+  void set_diagonal (const std::vector<double> &diag_vals);
+  void mult_vector (const std::vector<double> &in, std::vector<double> &out);
   bool is_symmetrical () const;
   double ij (const int i, const int j) const;
+
+  void construct_from (const int n, std::vector<double> matrix);
+  void construct_from (const std::vector<matrix_el> &els);
+  void construct_from (std::vector<matrix_el> &&els);
 private:
   void print_row (FILE *fout, const int i, const int row_begin, const int row_end);
   void get_ja_row_bounds (const int i, int &begin, int &end) const;
+
 };
 
 #endif // MSR_MATRIX_H

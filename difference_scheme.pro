@@ -12,7 +12,8 @@ SOURCES += \
     src/kernel/input/rhs_functions.cpp \
     src/kernel/input/start_functions.cpp \
     src/kernel/scheme_point.cpp \
-    src/kernel/scheme_iter_data.cpp
+    src/kernel/scheme_iter_data.cpp \
+    src/kernel/matrix_el.cpp
 
 HEADERS += \
     src/containers/simple_vector.h \
@@ -25,7 +26,8 @@ HEADERS += \
     src/kernel/input/start_functions.h \
     src/kernel/scheme_point.h \
     src/kernel/scheme_defs.h \
-    src/kernel/scheme_iter_data.h
+    src/kernel/scheme_iter_data.h \
+    src/kernel/matrix_el.h
 
 PRECOMPILED_HEADER = src/precompiled/precompiled_header.h
 
