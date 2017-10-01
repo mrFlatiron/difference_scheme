@@ -9,7 +9,7 @@ private:
   std::vector<matrix_el> m_equation_coefs;
   msr_matrix m_system;
   std::vector<double> m_rhs;
-  int m_iter;
+  int m_iter = 1;
 public:
   scheme_iter_data ();
   ~scheme_iter_data ();
@@ -25,7 +25,11 @@ public:
   std::vector<double> &rhs ();
   const std::vector<double> &rhs () const;
 
+  int iter () const;
+
   void inc_iter ();
+
+  void init (const int N, const int M);
 };
 
 #endif // SCHEME_ITER_DATA_H

@@ -1,7 +1,12 @@
 #include "difference_scheme_solver.h"
 
-#include "input/rhs_functions.h"
+#include "input/known_functions.h"
 #include "input/start_functions.h"
+
+#include "kernel/dqgmres_solver/msr_thread_dqgmres_solver.h"
+#include "kernel/dqgmres_solver/msr_dqgmres_initializer.h"
+
+#include "containers/simple_vector.h"
 
 difference_scheme_solver::difference_scheme_solver () :
   m_state (solver_state::invalid)
@@ -31,17 +36,13 @@ void difference_scheme_solver::solve ()
   for (int i = 0; i < m_N; i++)
     {
       make_first_system ();
-      if (state () == solver_state::failed)
-        return;
       make_second_system ();
-      if (state () == solver_state::failed)
-        return;
       merge_systems ();
-      if (state () == solver_state::failed)
-        return;
       solve_system ();
       if (state () == solver_state::failed)
         return;
+      m_last_computed_layer = m_iter_data.iter ();
+      m_iter_data.inc_iter ();
     }
   m_state = solver_state::solved;
 }
@@ -104,39 +105,102 @@ void difference_scheme_solver::make_first_system ()
   int row = 0; // row in system
   int m = 0;
   int n = m_last_computed_layer;
-  //something about m == 0;
-  //rhs
+  set_coef (net_func::G, row, 0, 1. / m_t + deriv_x ({net_func::V}, {deriv_type::fw}, n, 0));
+//  set_coef (net_func::G, row, 1, v_val (n, 0) / (2 * m_h));
+//  set_coef (net_func::V, row, 0, - 1. / m_h);
+  set_coef (net_func::V, row, 1, 1. / m_h);
+  set_rhs_val (row,
+               f0 (n * m_t, 0) + g_val (n , 0) / m_t +
+               (m_h / 2) *
+               (deriv_x ({net_func::G, net_func::V}, {deriv_type::fw, deriv_type::bw}, n, 1) +
+                   0.5 *
+                deriv_x ({net_func::G, net_func::V}, {deriv_type::fw, deriv_type::bw}, n, 2) +
+                (2 - g_val (n, 0)) * (deriv_x ({net_func::V}, {deriv_type::fw, deriv_type::bw}, n, 1) +
+                                         - 0.5 *
+                                         deriv_x ({net_func::V}, {deriv_type::fw, deriv_type::bw}, n, 2))) +
+               (g_val (n, 0) * deriv_x ({net_func::V}, {deriv_type::fw}, n, 0)) / 2);
   row++;
   m++;
   for (; m < m_M; m++, row++)
     {
       set_coef (net_func::G, row, m - 1, - g_val (n, m) / (2 * m_h));
-      set_coef (net_func::G, row, m    , (1 / m_t + 0.5 * deriv ({net_func::V}, {deriv_type::wide}, variable::x, scheme_point (n, m))));
+      set_coef (net_func::G, row, m    , (1 / m_t + 0.5 * deriv_x ({net_func::V}, {deriv_type::wide}, n, m)));
       set_coef (net_func::G, row, m + 1, v_val (n, m) / (2 * m_h));
-      set_coef (net_func::V, row, m + 1, 1 / (2 * m_h));
-      set_coef (net_func::V, row, m - 1, - 1 / (2 * m_h));
+
+      if (m != m_M - 1)
+        set_coef (net_func::V, row, m + 1, 1 / (2 * m_h));
+
+      if (m != 1)
+        set_coef (net_func::V, row, m - 1, - 1 / (2 * m_h));
+
       set_rhs_val (row,
                    f0 (n * m_t, m * m_h) +
                    g_val (n, m) *
-                   (1 / m_t + 0.5 * deriv ({net_func::V}, {deriv_type::wide}, variable::x, scheme_point (n, m))));
+                   (1 / m_t + 0.5 * deriv_x ({net_func::V}, {deriv_type::wide}, n, m)));
     }
-  //something about m == m_M
-  //rhs
+  set_coef (net_func::G, row, m_M, 1. / m_t + deriv_x ({net_func::V}, {deriv_type::bw}, n, m_M) / 2);
+  set_coef (net_func::V, row, m_M - 1, - 1. / m_h);
+//  set_coef (net_func::V, row, m_M, 1. / m_h);
+  set_rhs_val (row,
+               f0 (n * m_t, m_X) +
+               g_val (n, m_M) / m_t +
+               (g_val (n, m_M) * deriv_x ({net_func::V}, {deriv_type::bw}, n, m_M)) / 2 -
+               (m_h / 2) * (deriv_x ({net_func::G, net_func::V}, {deriv_type::fw, deriv_type::bw}, n, m_M - 1) -
+                            0.5 * deriv_x ({net_func::G, net_func::V}, {deriv_type::fw, deriv_type::bw}, n, m_M - 2) +
+                            (2 - g_val (n, m_M)) * (
+                              deriv_x ({net_func::V}, {deriv_type::fw, deriv_type::bw}, n, m_M - 1) -
+                              0.5 * deriv_x ({net_func::V}, {deriv_type::fw, deriv_type::bw}, n, m_M - 2)))
+               );
 }
 
 void difference_scheme_solver::make_second_system ()
 {
   int row = m_M + 1;
+  int m = 1;
+  int n = m_last_computed_layer;
+  for (; m < m_M; m++, row++)
+    {
+      if (m != 1)
+        set_coef (net_func::V, row, m - 1, - v_val (n, m) / (3 * m_h) - (m_mu * layer_norm (n)) / (m_h * m_h));
+
+      set_coef (net_func::V, row, m, 1. / m_t + deriv_x ({net_func::V}, {deriv_type::wide}, n, m) / 3 +
+                (2 * m_mu * layer_norm (n)) / (m_h * m_h));
+
+      if (m != m_M - 1)
+        set_coef ({net_func::V}, row, m + 1, v_val (n, m) / (3 * m_h) - (m_mu * layer_norm (n)) / (m_h * m_h));
+
+      set_coef (net_func::G, row, m - 1, -(p_wave_deriv (g_val (n, m))) / (2 * m_h));
+      set_coef (net_func::G, row, m + 1, (p_wave_deriv (g_val (n, m))) / (2 * m_h));
+      set_rhs_val (row, f1 (n * m_t, m * m_h) -
+                   deriv_x ({net_func::V}, {deriv_type::fw, deriv_type::bw}, n, m) * (
+                     m_mu * layer_norm (n) - m_mu * exp (-g_val (n, m))) + v_val (n, m) / m_t);
+    }
 }
 
 void difference_scheme_solver::merge_systems ()
 {
+  m_iter_data.system ().construct_from (m_iter_data.equation_coefs ());
 
+  m_iter_data.system ().mult_coef (m_t);
+
+  math_utils::mult_vector_coef (m_iter_data.rhs (), m_t);
+  printf ("Iter : %d\n", m_iter_data.iter ());
+  m_iter_data.system ().dump ();
 }
 
 void difference_scheme_solver::solve_system ()
 {
+  std::vector<double> stdv (2 * m_M, 0);
+  simple_vector v (stdv);
+  simple_vector out;
+  out.resize (2 * m_M);
+  msr_dqgmres_initializer initer (0, 1, m_iter_data.system (),
+                                  preconditioner_type::jacobi,
+                                  5, 300, 1e-15, v, out, m_iter_data.rhs ());
+  msr_thread_dqgmres_solver dqgmres (0, initer);
 
+  dqgmres.dqgmres_solve ();
+  set_computed (out);
 }
 
 void difference_scheme_solver::init ()
@@ -151,8 +215,8 @@ void difference_scheme_solver::init ()
       return;
     }
 
-  if (utils::eq (m_M, 0) ||
-      utils::eq (m_N, 0))
+  if (math_utils::eq (m_M, 0) ||
+      math_utils::eq (m_N, 0))
     {
       m_state = solver_state::invalid;
       return;
@@ -168,6 +232,9 @@ void difference_scheme_solver::init ()
   fill_V_borders ();
 
   m_last_computed_layer = 0;
+
+  m_iter_data.init (m_N, m_M);
+
   m_state = solver_state::ready;
 }
 
@@ -272,6 +339,16 @@ double difference_scheme_solver::deriv (const std::vector<net_func> &product,
   return 0;
 }
 
+double difference_scheme_solver::deriv_x (const std::vector<net_func> &product, const std::vector<deriv_type> &types, const int n, const int m) const
+{
+  return deriv (product, types, variable::x, scheme_point (n, m));
+}
+
+double difference_scheme_solver::deriv_t (const std::vector<net_func> &product, const std::vector<deriv_type> &types, const int n, const int m) const
+{
+  return deriv (product, types, variable::t, scheme_point (n, m));
+}
+
 void difference_scheme_solver::set_coef (const net_func f, const int row, const int m, const double val)
 {
   int col;
@@ -283,13 +360,40 @@ void difference_scheme_solver::set_coef (const net_func f, const int row, const 
     case net_func::V:
       col = m_M + m; // (m_M + 1) + (m - 1)
     }
-
-  m_iter_data.equation_coefs ().emplace_back (row, col, val);
+  if (!math_utils::eq (val, 0))
+    m_iter_data.equation_coefs ().emplace_back (row, col, val);
+  else
+    DEBUG_PAUSE ("Zero coef");
 }
 
 void difference_scheme_solver::set_rhs_val (const int row, const double val)
 {
   m_iter_data.rhs ()[row] = val;
+}
+
+void difference_scheme_solver::set_computed (const simple_vector &out)
+{
+  for (int i = 0; i <= m_M; i++)
+    get_G_layer (m_last_computed_layer + 1)[i] = out[i];
+
+  int m = 1;
+  for (int i = m_M + 1; i < 2 * m_M; i++, m++)
+    get_V_layer (m_last_computed_layer + 1)[m] = out[i];
+}
+
+double difference_scheme_solver::layer_norm (const int n) const
+{
+  double max = -1;
+
+  const double *g = get_G_layer (n);
+
+  for (int m = 0; m <= m_M; m++)
+    {
+      double e = exp (-g[m]);
+      if (max < e)
+        max = e;
+    }
+  return max;
 }
 
 int difference_scheme_solver::nodes_count () const

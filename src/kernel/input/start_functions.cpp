@@ -3,7 +3,7 @@
 
 double rho0 (const double x)
 {
-  return x;
+  return x + 2;
 }
 
 double u0 (const double x)

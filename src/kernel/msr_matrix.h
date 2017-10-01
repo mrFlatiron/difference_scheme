@@ -4,9 +4,12 @@
 #include "containers/simple_vector.h"
 #include "matrix_el.h"
 
+class msr_thread_dqgmres_solver;
+
 class msr_matrix
 {
 private:
+  friend class msr_thread_dqgmres_solver;
   int m_n;
   int m_arr_size;
   std::vector<double> m_aa;
@@ -29,6 +32,8 @@ public:
   void mult_vector (const std::vector<double> &in, std::vector<double> &out);
   bool is_symmetrical () const;
   double ij (const int i, const int j) const;
+
+  void mult_coef (const double coef);
 
   void construct_from (const int n, std::vector<double> matrix);
   void construct_from (const std::vector<matrix_el> &els);

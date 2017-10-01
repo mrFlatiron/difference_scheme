@@ -5,8 +5,8 @@
 class simple_vector
 {
 private:
-  double *m_data;
-  int m_size;
+  double *m_data = nullptr;
+  int m_size = 0;
   bool m_is_owner = true;
 public:
   simple_vector ();

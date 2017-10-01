@@ -12,7 +12,7 @@ scheme_iter_data::~scheme_iter_data ()
 
 scheme_iter_data::scheme_iter_data (const int N, const int M)
 {
-  m_rhs.resize (2 * M);
+  init (N, M);
 }
 
 msr_matrix &scheme_iter_data::system ()
@@ -45,8 +45,20 @@ const std::vector<double> &scheme_iter_data::rhs () const
   return m_rhs;
 }
 
-void scheme_iter_data::inc_iter()
+int scheme_iter_data::iter () const
+{
+  return m_iter;
+}
+
+void scheme_iter_data::inc_iter ()
 {
   m_iter++;
+  m_equation_coefs.clear ();
+}
+
+void scheme_iter_data::init (const int N, const int M)
+{
+  (void)N;
+  m_rhs.resize (2 * M);
 }
 

@@ -312,6 +312,12 @@ double msr_matrix::ij (const int i, const int j) const
   return 0;
 }
 
+void msr_matrix::mult_coef (const double coef)
+{
+  for (int i = 0; i < m_arr_size; i++)
+    m_aa[i] *= coef;
+}
+
 
 void msr_matrix::print_row (FILE *fout, const int i, const int row_begin, const int row_end)
 {

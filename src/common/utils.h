@@ -31,24 +31,7 @@ void put_in (std::unique_ptr<T> &something, Args&&... args)
 
 namespace utils
 {
-  template<typename T>
-  T min (const T &l, const T &r)
-  {
-    if (l < r)
-      return l;
-    else
-      return r;
-  }
 
-  constexpr double EQ_PRECISION = 1e-15;
-
-  inline bool eq (const double a, const double b)
-  {
-    if (fabs (a - b) < EQ_PRECISION)
-      return true;
-    else
-      return false;
-  }
 }
 
 #endif // MY_UTILS_H

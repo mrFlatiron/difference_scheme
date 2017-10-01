@@ -69,8 +69,19 @@ private:
                 const variable var,
                 scheme_point p) const;
 
+  double deriv_x (const std::vector<net_func> &product,
+                  const std::vector<deriv_type> &types,
+                  const int n, const int m) const;
+
+  double deriv_t (const std::vector<net_func> &product,
+                  const std::vector<deriv_type> &types,
+                  const int n, const int m) const;
+
   void set_coef (const net_func f, const int row, const int m, const double val);
   void set_rhs_val (const int row, const double val);
+  void set_computed (const simple_vector &out);
+
+  double layer_norm (const int n) const; // ||e^(-G)||_C
 };
 
 #endif // DIFFERENCE_SCHEME_SOLVER_H

@@ -103,10 +103,7 @@ simple_vector &simple_vector::operator= (simple_vector &&vect)
 
 simple_vector::simple_vector (const std::vector<double> &stdvec)
 {
-  m_size = isize (stdvec);
-  if (!m_size)
-    return;
-
+  resize (isize (stdvec));
 
   for (int i = 0; i < m_size; i++)
     m_data[i] = stdvec[i];
