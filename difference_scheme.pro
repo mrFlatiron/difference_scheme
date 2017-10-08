@@ -19,7 +19,20 @@ SOURCES += \
     src/kernel/dqgmres_solver/msr_thread_dqgmres_solver.cpp \
     src/kernel/dqgmres_solver/msr_thread_handler.cpp \
     src/kernel/threads/thread_handler.cpp \
-    src/kernel/threads/thread_vector_utils.cpp
+    src/kernel/threads/thread_vector_utils.cpp \
+    src/kernel/laspack_matrix.cpp \
+    src/kernel/laspack_vector.cpp \
+    src/3rd_party/laspack/eigenval.c \
+    src/3rd_party/laspack/errhandl.c \
+    src/3rd_party/laspack/factor.c \
+    src/3rd_party/laspack/itersolv.c \
+    src/3rd_party/laspack/matrix.c \
+    src/3rd_party/laspack/mlsolv.c \
+    src/3rd_party/laspack/operats.c \
+    src/3rd_party/laspack/precond.c \
+    src/3rd_party/laspack/qmatrix.c \
+    src/3rd_party/laspack/rtc.c \
+    src/3rd_party/laspack/vector.c
 
 HEADERS += \
     src/containers/simple_vector.h \
@@ -40,10 +53,28 @@ HEADERS += \
     src/kernel/dqgmres_solver/msr_thread_handler.h \
     src/kernel/threads/thread_handler.h \
     src/kernel/threads/thread_vector_utils.h \
-    src/containers/limited_deque.h
+    src/containers/limited_deque.h \
+    src/kernel/laspack_matrix.h \
+    src/kernel/laspack_vector.h \
+    src/3rd_party/laspack/copyrght.h \
+    src/3rd_party/laspack/eigenval.h \
+    src/3rd_party/laspack/elcmp.h \
+    src/3rd_party/laspack/errhandl.h \
+    src/3rd_party/laspack/factor.h \
+    src/3rd_party/laspack/itersolv.h \
+    src/3rd_party/laspack/lastypes.h \
+    src/3rd_party/laspack/matrix.h \
+    src/3rd_party/laspack/mlsolv.h \
+    src/3rd_party/laspack/operats.h \
+    src/3rd_party/laspack/precond.h \
+    src/3rd_party/laspack/qmatrix.h \
+    src/3rd_party/laspack/rtc.h \
+    src/3rd_party/laspack/vector.h \
+    src/3rd_party/laspack/version.h
 
 PRECOMPILED_HEADER = src/precompiled/precompiled_header.h
 
 INCLUDEPATH += src
+
 
 LIBS += -pthread

@@ -38,6 +38,8 @@ public:
   void construct_from (const int n, std::vector<double> matrix);
   void construct_from (const std::vector<matrix_el> &els);
   void construct_from (std::vector<matrix_el> &&els);
+
+
 private:
   void print_row (FILE *fout, const int i, const int row_begin, const int row_end);
   void get_ja_row_bounds (const int i, int &begin, int &end) const;

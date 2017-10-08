@@ -32,6 +32,11 @@ double matrix_el::val () const
   return m_val;
 }
 
+double &matrix_el::val ()
+{
+  return m_val;
+}
+
 bool matrix_el::operator < (const matrix_el &rhs) const
 {
   if (i () < rhs.i ())

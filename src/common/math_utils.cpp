@@ -34,3 +34,15 @@ void math_utils::mult_vector_coef (std::vector<double> &vect, const double coef)
   for (int i = 0; i < isize (vect); i++)
     vect[i] *= coef;
 }
+
+double math_utils::l2_norm_dif (const double *a, const double *b, const int size)
+{
+  double sq = 0;
+
+  for (int i = 0; i < size; i++)
+    {
+      sq += (a[i] - b[i]) * (a[i] - b[i]);
+    }
+
+  return sqrt (sq);
+}

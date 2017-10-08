@@ -29,6 +29,7 @@ public:
   double *data ();
   const double *data () const;
   void resize (const int size);
+  std::vector<double> to_std_vector () const;
 };
 
 #endif // SIMPLE_VECTOR_H

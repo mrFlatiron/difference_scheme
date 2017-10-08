@@ -168,3 +168,12 @@ void simple_vector::resize (const int size)
     }
   m_size = size;
 }
+
+std::vector<double> simple_vector::to_std_vector () const
+{
+  std::vector<double> retval;
+  for (int i = 0; i < m_size; i++)
+    retval.push_back (m_data[i]);
+
+  return retval;
+}

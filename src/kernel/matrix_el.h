@@ -18,7 +18,10 @@ public:
   int j () const;
   double val () const;
 
+  double &val ();
+
   bool operator < (const matrix_el &rhs) const;
+
 };
 
 #endif // MATRIX_EL_H

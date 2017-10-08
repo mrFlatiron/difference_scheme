@@ -1,6 +1,8 @@
 #ifndef MATH_UTILS_H
 #define MATH_UTILS_H
 
+#include <vector>
+
 namespace math_utils
 {
   template<typename T>
@@ -18,6 +20,7 @@ namespace math_utils
 
   double c_norm (const double *a, const int size);
   double l2_norm (const double *a, const int size);
+  double l2_norm_dif (const double *a, const double *b, const int size);
 
   void mult_vector_coef (std::vector<double> &vect, const double coef);
 }

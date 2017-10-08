@@ -8,6 +8,10 @@
 
 #include "containers/simple_vector.h"
 
+#include "3rd_party/laspack/itersolv.h"
+#include "kernel/laspack_matrix.h"
+#include "kernel/laspack_vector.h"
+
 difference_scheme_solver::difference_scheme_solver () :
   m_state (solver_state::invalid)
 {
@@ -106,8 +110,6 @@ void difference_scheme_solver::make_first_system ()
   int m = 0;
   int n = m_last_computed_layer;
   set_coef (net_func::G, row, 0, 1. / m_t + deriv_x ({net_func::V}, {deriv_type::fw}, n, 0));
-//  set_coef (net_func::G, row, 1, v_val (n, 0) / (2 * m_h));
-//  set_coef (net_func::V, row, 0, - 1. / m_h);
   set_coef (net_func::V, row, 1, 1. / m_h);
   set_rhs_val (row,
                f0 (n * m_t, 0) + g_val (n , 0) / m_t +
@@ -140,7 +142,6 @@ void difference_scheme_solver::make_first_system ()
     }
   set_coef (net_func::G, row, m_M, 1. / m_t + deriv_x ({net_func::V}, {deriv_type::bw}, n, m_M) / 2);
   set_coef (net_func::V, row, m_M - 1, - 1. / m_h);
-//  set_coef (net_func::V, row, m_M, 1. / m_h);
   set_rhs_val (row,
                f0 (n * m_t, m_X) +
                g_val (n, m_M) / m_t +
@@ -179,27 +180,38 @@ void difference_scheme_solver::make_second_system ()
 
 void difference_scheme_solver::merge_systems ()
 {
-  m_iter_data.system ().construct_from (m_iter_data.equation_coefs ());
+  int dim = 2 * m_M;
 
-  m_iter_data.system ().mult_coef (m_t);
+  for (auto &p : m_iter_data.equation_coefs ())
+    {
+      p.val () = p.val () * m_t;
+    }
 
-  math_utils::mult_vector_coef (m_iter_data.rhs (), m_t);
+  for (auto &rhs_v : m_iter_data.rhs ())
+    rhs_v *= m_t;
+
+  m_iter_data.system ().construct_from (m_iter_data.equation_coefs (), dim);
+
+
+
   printf ("Iter : %d\n", m_iter_data.iter ());
-  m_iter_data.system ().dump ();
 }
 
 void difference_scheme_solver::solve_system ()
 {
-  std::vector<double> stdv (2 * m_M, 0);
-  simple_vector v (stdv);
-  simple_vector out;
-  out.resize (2 * m_M);
-  msr_dqgmres_initializer initer (0, 1, m_iter_data.system (),
-                                  preconditioner_type::jacobi,
-                                  5, 300, 1e-15, v, out, m_iter_data.rhs ());
-  msr_thread_dqgmres_solver dqgmres (0, initer);
+  laspack_vector rhs (m_iter_data.rhs ());
+  laspack_vector out (2 * m_M);
 
-  dqgmres.dqgmres_solve ();
+  m_iter_data.system ().dump ();
+
+  for (int i = 0; i < 2 * m_M; i++)
+    printf ("out[%d] = %lf\n", i, rhs[i]);
+
+  BiCGSTABIter (m_iter_data.system ().raw (), out.raw (), rhs.raw (), 300, NULL, 1.2);
+
+  for (int i = 0; i < 2 * m_M; i++)
+    printf ("out[%d] = %lf\n", i, out[i]);
+
   set_computed (out);
 }
 
@@ -371,7 +383,7 @@ void difference_scheme_solver::set_rhs_val (const int row, const double val)
   m_iter_data.rhs ()[row] = val;
 }
 
-void difference_scheme_solver::set_computed (const simple_vector &out)
+void difference_scheme_solver::set_computed (const laspack_vector &out)
 {
   for (int i = 0; i <= m_M; i++)
     get_G_layer (m_last_computed_layer + 1)[i] = out[i];

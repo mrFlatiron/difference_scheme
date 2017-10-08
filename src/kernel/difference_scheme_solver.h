@@ -7,6 +7,7 @@
 #include "scheme_point.h"
 #include "scheme_iter_data.h"
 
+class laspack_vector;
 
 
 class difference_scheme_solver
@@ -79,9 +80,11 @@ private:
 
   void set_coef (const net_func f, const int row, const int m, const double val);
   void set_rhs_val (const int row, const double val);
-  void set_computed (const simple_vector &out);
+  void set_computed (const laspack_vector &out);
 
   double layer_norm (const int n) const; // ||e^(-G)||_C
+
+
 };
 
 #endif // DIFFERENCE_SCHEME_SOLVER_H

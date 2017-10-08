@@ -15,12 +15,12 @@ scheme_iter_data::scheme_iter_data (const int N, const int M)
   init (N, M);
 }
 
-msr_matrix &scheme_iter_data::system ()
+laspack_matrix &scheme_iter_data::system ()
 {
   return m_system;
 }
 
-const msr_matrix &scheme_iter_data::system () const
+const laspack_matrix &scheme_iter_data::system() const
 {
   return m_system;
 }
