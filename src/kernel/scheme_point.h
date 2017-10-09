@@ -19,8 +19,8 @@ public:
   int n () const;
   int m () const;
 
-  self &inc (const variable var);
-  self &dec (const variable var);
+  self inc(const variable var);
+  self dec (const variable var);
 };
 
 #endif // SCHEME_POINT_H

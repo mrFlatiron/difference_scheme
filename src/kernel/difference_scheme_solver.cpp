@@ -109,23 +109,23 @@ void difference_scheme_solver::make_first_system ()
   int row = 0; // row in system
   int m = 0;
   int n = m_last_computed_layer;
-  set_coef (net_func::G, row, 0, 1. / m_t + deriv_x ({net_func::V}, {deriv_type::fw}, n, 0));
+  set_coef (net_func::G, row, 0, 1. / m_t + deriv_x ({net_func::V}, {deriv_type::fw}, n, 0) / 2);
   set_coef (net_func::V, row, 1, 1. / m_h);
   set_rhs_val (row,
                f0 (n * m_t, 0) + g_val (n , 0) / m_t +
                (m_h / 2) *
-               (deriv_x ({net_func::G, net_func::V}, {deriv_type::fw, deriv_type::bw}, n, 1) +
+               (deriv_x ({net_func::G, net_func::V}, {deriv_type::fw, deriv_type::bw}, n, 1) -
                    0.5 *
                 deriv_x ({net_func::G, net_func::V}, {deriv_type::fw, deriv_type::bw}, n, 2) +
-                (2 - g_val (n, 0)) * (deriv_x ({net_func::V}, {deriv_type::fw, deriv_type::bw}, n, 1) +
-                                         - 0.5 *
+                (2 - g_val (n, 0)) * (deriv_x ({net_func::V}, {deriv_type::fw, deriv_type::bw}, n, 1) -
+                                         0.5 *
                                          deriv_x ({net_func::V}, {deriv_type::fw, deriv_type::bw}, n, 2))) +
                (g_val (n, 0) * deriv_x ({net_func::V}, {deriv_type::fw}, n, 0)) / 2);
   row++;
   m++;
   for (; m < m_M; m++, row++)
     {
-      set_coef (net_func::G, row, m - 1, - g_val (n, m) / (2 * m_h));
+      set_coef (net_func::G, row, m - 1, - v_val (n, m) / (2 * m_h));
       set_coef (net_func::G, row, m    , (1 / m_t + 0.5 * deriv_x ({net_func::V}, {deriv_type::wide}, n, m)));
       set_coef (net_func::G, row, m + 1, v_val (n, m) / (2 * m_h));
 
@@ -205,7 +205,7 @@ void difference_scheme_solver::solve_system ()
   m_iter_data.system ().dump ();
 
   for (int i = 0; i < 2 * m_M; i++)
-    printf ("out[%d] = %lf\n", i, rhs[i]);
+    printf ("rhs[%d] = %lf\n", i, rhs[i]);
 
   BiCGSTABIter (m_iter_data.system ().raw (), out.raw (), rhs.raw (), 300, NULL, 1.2);
 

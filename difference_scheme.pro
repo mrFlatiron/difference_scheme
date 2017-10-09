@@ -32,7 +32,8 @@ SOURCES += \
     src/3rd_party/laspack/precond.c \
     src/3rd_party/laspack/qmatrix.c \
     src/3rd_party/laspack/rtc.c \
-    src/3rd_party/laspack/vector.c
+    src/3rd_party/laspack/vector.c \
+    src/kernel/input/wanted_functions.cpp
 
 HEADERS += \
     src/containers/simple_vector.h \
@@ -70,7 +71,8 @@ HEADERS += \
     src/3rd_party/laspack/qmatrix.h \
     src/3rd_party/laspack/rtc.h \
     src/3rd_party/laspack/vector.h \
-    src/3rd_party/laspack/version.h
+    src/3rd_party/laspack/version.h \
+    src/kernel/input/wanted_functions.h
 
 PRECOMPILED_HEADER = src/precompiled/precompiled_header.h
 

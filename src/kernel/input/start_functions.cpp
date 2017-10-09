@@ -1,17 +1,18 @@
 #include "start_functions.h"
+#include "wanted_functions.h"
 
 
 double rho0 (const double x)
 {
-  return exp (x);
+  return exp (g0 (x));
 }
 
 double u0 (const double x)
 {
-  return sin (x);
+  return v (0, x);
 }
 
 double g0 (const double x)
 {
-  return log (rho0 (x));
+  return g (0, x);
 }
