@@ -5,8 +5,6 @@ CONFIG -= qt
 CONFIG += precompile_header
 
 SOURCES += \
-    src/containers/simple_vector.cpp \
-    src/kernel/msr_matrix.cpp \
     src/main/main.cpp \
     src/kernel/difference_scheme_solver.cpp \
     src/kernel/input/start_functions.cpp \
@@ -15,11 +13,6 @@ SOURCES += \
     src/kernel/matrix_el.cpp \
     src/kernel/input/known_functions.cpp \
     src/common/math_utils.cpp \
-    src/kernel/dqgmres_solver/msr_dqgmres_initializer.cpp \
-    src/kernel/dqgmres_solver/msr_thread_dqgmres_solver.cpp \
-    src/kernel/dqgmres_solver/msr_thread_handler.cpp \
-    src/kernel/threads/thread_handler.cpp \
-    src/kernel/threads/thread_vector_utils.cpp \
     src/kernel/laspack_matrix.cpp \
     src/kernel/laspack_vector.cpp \
     src/3rd_party/laspack/eigenval.c \
@@ -33,11 +26,10 @@ SOURCES += \
     src/3rd_party/laspack/qmatrix.c \
     src/3rd_party/laspack/rtc.c \
     src/3rd_party/laspack/vector.c \
-    src/kernel/input/wanted_functions.cpp
+    src/kernel/input/wanted_functions.cpp \
+    src/kernel/solver_checker.cpp
 
 HEADERS += \
-    src/containers/simple_vector.h \
-    src/kernel/msr_matrix.h \
     src/precompiled/precompiled_header.h \
     src/common/debug_utils.h \
     src/common/utils.h \
@@ -49,12 +41,6 @@ HEADERS += \
     src/kernel/matrix_el.h \
     src/kernel/input/known_functions.h \
     src/common/math_utils.h \
-    src/kernel/dqgmres_solver/msr_dqgmres_initializer.h \
-    src/kernel/dqgmres_solver/msr_thread_dqgmres_solver.h \
-    src/kernel/dqgmres_solver/msr_thread_handler.h \
-    src/kernel/threads/thread_handler.h \
-    src/kernel/threads/thread_vector_utils.h \
-    src/containers/limited_deque.h \
     src/kernel/laspack_matrix.h \
     src/kernel/laspack_vector.h \
     src/3rd_party/laspack/copyrght.h \
@@ -72,7 +58,8 @@ HEADERS += \
     src/3rd_party/laspack/rtc.h \
     src/3rd_party/laspack/vector.h \
     src/3rd_party/laspack/version.h \
-    src/kernel/input/wanted_functions.h
+    src/kernel/input/wanted_functions.h \
+    src/kernel/solver_checker.h
 
 PRECOMPILED_HEADER = src/precompiled/precompiled_header.h
 

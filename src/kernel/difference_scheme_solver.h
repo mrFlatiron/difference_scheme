@@ -45,6 +45,10 @@ public:
 
   solver_state state () const;
   int nodes_count () const;
+  int M () const;
+  int N () const;
+  double X () const;
+  double T () const;
 private:
   void make_first_system ();
   void make_second_system ();

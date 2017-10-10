@@ -1,13 +1,13 @@
 #include "known_functions.h"
 
-double f0 (const int t, const int x)
+double f0 (const double t, const double x)
 {
   (void)t;
   (void)x;
   return x*x + x - 1;
 }
 
-double f1 (const int t, const int x)
+double f1 (const double t, const double x)
 {
   (void)t;
   return 2 * x * x * x - 3 * x * x + x + 1 - exp (-x);

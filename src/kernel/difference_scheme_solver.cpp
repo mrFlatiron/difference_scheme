@@ -3,8 +3,6 @@
 #include "input/known_functions.h"
 #include "input/start_functions.h"
 
-#include "kernel/dqgmres_solver/msr_thread_dqgmres_solver.h"
-#include "kernel/dqgmres_solver/msr_dqgmres_initializer.h"
 
 #include "containers/simple_vector.h"
 
@@ -195,6 +193,8 @@ void difference_scheme_solver::merge_systems ()
 
 
   printf ("Iter : %d\n", m_iter_data.iter ());
+
+//  m_iter_data.system ().dump ();
 }
 
 void difference_scheme_solver::solve_system ()
@@ -202,15 +202,7 @@ void difference_scheme_solver::solve_system ()
   laspack_vector rhs (m_iter_data.rhs ());
   laspack_vector out (2 * m_M);
 
-  m_iter_data.system ().dump ();
-
-  for (int i = 0; i < 2 * m_M; i++)
-    printf ("rhs[%d] = %lf\n", i, rhs[i]);
-
   BiCGSTABIter (m_iter_data.system ().raw (), out.raw (), rhs.raw (), 300, NULL, 1.2);
-
-  for (int i = 0; i < 2 * m_M; i++)
-    printf ("out[%d] = %lf\n", i, out[i]);
 
   set_computed (out);
 }
@@ -411,4 +403,24 @@ double difference_scheme_solver::layer_norm (const int n) const
 int difference_scheme_solver::nodes_count () const
 {
   return (m_M + 1) * (m_N + 1);
+}
+
+int difference_scheme_solver::M () const
+{
+  return m_M;
+}
+
+int difference_scheme_solver::N () const
+{
+  return m_N;
+}
+
+double difference_scheme_solver::X () const
+{
+  return m_X;
+}
+
+double difference_scheme_solver::T () const
+{
+  return m_T;
 }
