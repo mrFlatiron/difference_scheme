@@ -1,3 +1,4 @@
+#include "precompiled/precompiled_header.h"
 #include "difference_scheme_solver.h"
 
 #include "input/known_functions.h"
@@ -21,15 +22,20 @@ difference_scheme_solver::~difference_scheme_solver ()
 
 }
 
-difference_scheme_solver::difference_scheme_solver (const int M, const int N, const int X, const int T, const double mu) :
-  m_M (M),
-  m_N (N),
-  m_X (X),
-  m_T (T),
-  m_mu (mu),
-  m_state (solver_state::invalid)
+void difference_scheme_solver::reset (int M, int N, double X, double T, double mu)
 {
+  m_M = M;
+  m_N = N;
+  m_X = X;
+  m_T = T;
+  m_mu = mu;
+  m_state = solver_state::invalid;
   init ();
+}
+
+difference_scheme_solver::difference_scheme_solver (int M, int N, double X, double T, double mu)
+{
+  reset (M, N, X, T, mu);
 }
 
 void difference_scheme_solver::solve ()
@@ -191,8 +197,8 @@ void difference_scheme_solver::merge_systems ()
   m_iter_data.system ().construct_from (m_iter_data.equation_coefs (), dim);
 
 
-
-  printf ("Iter : %d\n", m_iter_data.iter ());
+  if (m_enable_printing)
+    printf ("Iter : %d\n", m_iter_data.iter ());
 
 //  m_iter_data.system ().dump ();
 }
@@ -366,8 +372,8 @@ void difference_scheme_solver::set_coef (const net_func f, const int row, const 
     }
   if (!math_utils::eq (val, 0))
     m_iter_data.equation_coefs ().emplace_back (row, col, val);
-  else
-    DEBUG_PAUSE ("Zero coef");
+//  else
+//    DEBUG_PAUSE ("Zero coef");
 }
 
 void difference_scheme_solver::set_rhs_val (const int row, const double val)
@@ -423,4 +429,9 @@ double difference_scheme_solver::X () const
 double difference_scheme_solver::T () const
 {
   return m_T;
+}
+
+void difference_scheme_solver::disable_printing ()
+{
+  m_enable_printing = false;
 }

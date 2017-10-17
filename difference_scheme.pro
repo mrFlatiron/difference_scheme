@@ -2,7 +2,6 @@ TEMPLATE = app
 CONFIG += console c++11
 CONFIG -= app_bundle
 CONFIG -= qt
-CONFIG += precompile_header
 
 SOURCES += \
     src/main/main.cpp \
@@ -60,8 +59,6 @@ HEADERS += \
     src/3rd_party/laspack/version.h \
     src/kernel/input/wanted_functions.h \
     src/kernel/solver_checker.h
-
-PRECOMPILED_HEADER = src/precompiled/precompiled_header.h
 
 INCLUDEPATH += src
 

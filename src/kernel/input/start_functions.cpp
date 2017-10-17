@@ -1,6 +1,6 @@
 #include "start_functions.h"
 #include "wanted_functions.h"
-
+#include "precompiled/precompiled_header.h"
 
 double rho0 (const double x)
 {

@@ -1,7 +1,6 @@
 #ifndef DIFFERENCE_SCHEME_SOLVER_H
 #define DIFFERENCE_SCHEME_SOLVER_H
-
-#include "containers/simple_vector.h"
+#include "precompiled/precompiled_header.h"
 
 #include "scheme_defs.h"
 #include "scheme_point.h"
@@ -26,11 +25,14 @@ private:
 
   scheme_iter_data m_iter_data;
   int m_last_computed_layer;
+  bool m_enable_printing = true;
 public:
   difference_scheme_solver ();
   ~difference_scheme_solver ();
 
-  difference_scheme_solver (const int M, const int N, const int X, const int T, const double mu);
+  difference_scheme_solver (int M, int N, double X, double T, double mu);
+
+  void reset (int M, int N, double X, double T, double mu);
 
   void solve ();
 
@@ -49,6 +51,8 @@ public:
   int N () const;
   double X () const;
   double T () const;
+
+  void disable_printing ();
 private:
   void make_first_system ();
   void make_second_system ();

@@ -60,5 +60,6 @@ void scheme_iter_data::init (const int N, const int M)
 {
   (void)N;
   m_rhs.resize (2 * M);
+  m_iter = 1;
 }
 

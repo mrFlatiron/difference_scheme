@@ -1,3 +1,4 @@
+#include "precompiled/precompiled_header.h"
 #include "scheme_point.h"
 
 scheme_point::scheme_point ()

@@ -1,3 +1,4 @@
+#include "precompiled/precompiled_header.h"
 #include "laspack_vector.h"
 
 laspack_vector::laspack_vector ()

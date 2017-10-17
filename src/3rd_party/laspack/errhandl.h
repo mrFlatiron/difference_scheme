@@ -41,7 +41,7 @@ extern "C"
 {
 #endif
 void LASError(LASErrIdType ErrId, const char *ProcName, const char *Object1Name,
-              char *Object2Name, char *Object3Name);
+              const char *Object2Name, const char *Object3Name);
 void LASBreak(void);
 LASErrIdType LASResult(void);
 void WriteLASErrDescr(FILE *File);

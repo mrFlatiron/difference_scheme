@@ -27,7 +27,7 @@ static char *LASObject2Name = NULL;
 static char *LASObject3Name = NULL;
 
 void LASError(LASErrIdType ErrId, const char *ProcName, const char *Object1Name,
-	      char *Object2Name, char *Object3Name)
+        const char *Object2Name, const char *Object3Name)
 /* Set error status to ErrId, ... */
 {
     LASErrId = ErrId;

@@ -1,3 +1,4 @@
+#include "precompiled/precompiled_header.h"
 #include "laspack_matrix.h"
 
 #include "matrix_el.h"

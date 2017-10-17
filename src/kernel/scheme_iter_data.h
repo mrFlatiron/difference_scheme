@@ -1,6 +1,6 @@
 #ifndef SCHEME_ITER_DATA_H
 #define SCHEME_ITER_DATA_H
-
+#include "precompiled/precompiled_header.h"
 #include "laspack_matrix.h"
 #include "matrix_el.h"
 
@@ -31,6 +31,7 @@ public:
   void inc_iter ();
 
   void init (const int N, const int M);
+
 };
 
 #endif // SCHEME_ITER_DATA_H
