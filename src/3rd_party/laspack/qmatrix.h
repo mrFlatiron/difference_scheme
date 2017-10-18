@@ -57,7 +57,7 @@ void Q_Constr(QMatrix *Q, const char *Name, size_t Dim, Boolean Symmetry,
               ElOrderType ElOrder, InstanceType Instance, Boolean OwnData);
 void Q_Destr(QMatrix *Q);
 void Q_SetName(QMatrix *Q, char *Name);
-char *Q_GetName(QMatrix *Q);
+const char *Q_GetName(QMatrix *Q);
 size_t Q_GetDim(QMatrix *Q);
 Boolean Q_GetSymmetry(QMatrix *Q);
 ElOrderType Q_GetElOrder(QMatrix *Q);

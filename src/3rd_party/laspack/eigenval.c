@@ -71,7 +71,7 @@ double GetMinEigenval(QMatrix *A, PrecondProcType PrecondProc, double OmegaPreco
 	
         /* if eigenvalues estimated with an other preconditioner, ... */
         if (EigenvalInfo->PrecondProcUsed != PrecondProc
-	    || EigenvalInfo->OmegaPrecondUsed != OmegaPrecond) {
+        || fabs (EigenvalInfo->OmegaPrecondUsed - OmegaPrecond) > 1e-15) {
             EstimEigenvals(A, PrecondProc, OmegaPrecond);
         }
 
@@ -110,7 +110,7 @@ double GetMaxEigenval(QMatrix *A, PrecondProcType PrecondProc, double OmegaPreco
 	
         /* if eigenvalues estimated with an other preconditioner, ... */
         if (EigenvalInfo->PrecondProcUsed != PrecondProc
-	    || EigenvalInfo->OmegaPrecondUsed != OmegaPrecond) {
+        || fabs (EigenvalInfo->OmegaPrecondUsed - OmegaPrecond) > 1e-15) {
             EstimEigenvals(A, PrecondProc, OmegaPrecond);
         }
 

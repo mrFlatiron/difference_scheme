@@ -118,7 +118,7 @@ void M_SetName(Matrix *M, char *Name)
     }
 }
 
-char *M_GetName(Matrix *M)
+const char *M_GetName(Matrix *M)
 /* returns the name of the matrix M */
 {
     if (LASResult() == LASOK)

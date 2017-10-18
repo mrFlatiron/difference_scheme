@@ -101,7 +101,6 @@ double solver_checker::net_dif_norm_C (const difference_scheme_solver &solver, n
   int M = solver.M ();
   int N = solver.N ();
   double h = solver.var_incr (variable::x);
-  double t = solver.var_incr (variable::t);
   double T = solver.T ();
   double max = -1;
   int n = N;
@@ -137,7 +136,6 @@ double solver_checker::net_dif_norm_L2 (const difference_scheme_solver &solver, 
   int M = solver.M ();
   int N = solver.N ();
   double h = solver.var_incr (variable::x);
-  double t = solver.var_incr (variable::t);
   double sum = 0;
   double T = solver.T ();
   int n = N;

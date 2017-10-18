@@ -72,7 +72,7 @@ void V_SetName(Vector *V, char *Name)
     }
 }
 
-char *V_GetName(Vector *V)
+const char *V_GetName(Vector *V)
 /* returns the name of the vector V */
 {
     if (LASResult() == LASOK)
@@ -130,7 +130,7 @@ void V_SetRndCmp(Vector *V)
         Dim = V_GetDim(V);
         VCmp = V->Cmp;
         for (Ind = 1; Ind <= Dim; Ind++) {
-            VCmp[Ind] = (double)rand() / ((double)RAND_MAX + 1.0);
+            VCmp[Ind] = rand() / ((double)RAND_MAX + 1.0);
         }
         V->Multipl = 1.0;
     }

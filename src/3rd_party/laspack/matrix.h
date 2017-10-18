@@ -44,7 +44,7 @@ void M_Constr(Matrix *M, char *Name, size_t RowDim, size_t ClmDim,
               ElOrderType ElOrder, InstanceType Instance, Boolean OwnData);
 void M_Destr(Matrix *M);
 void M_SetName(Matrix *M, char *Name);
-char *M_GetName(Matrix *M);
+const char *M_GetName(Matrix *M);
 size_t M_GetRowDim(Matrix *M);
 size_t M_GetClmDim(Matrix *M);
 ElOrderType M_GetElOrder(Matrix *M);

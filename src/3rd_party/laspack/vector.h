@@ -41,7 +41,7 @@ void V_Constr(Vector *V, const char *Name, size_t Dim, InstanceType Instance,
         Boolean OwnData);
 void V_Destr(Vector *V);
 void V_SetName(Vector *V, char *Name);
-char *V_GetName(Vector *V);
+const char *V_GetName(Vector *V);
 size_t V_GetDim(Vector *V);
 void V_SetCmp(Vector *V, size_t Ind, Real Val);
 void V_SetAllCmp(Vector *V, Real Val);

@@ -295,7 +295,7 @@ QMatrix *ILUFactor(QMatrix *Q)
                 Q->ILU->ElOrder = Q->ElOrder;
 		
                 /* check for multipliers of the matrix Q */
-                if (Q->MultiplU == Q->MultiplD && Q->MultiplL == Q->MultiplD) {
+                if (fabs (Q->MultiplU - Q->MultiplD) < 1e-15 && fabs (Q->MultiplL - Q->MultiplD) < 1e-15) {
                     /* multipliers of matrix Q are valid for Q->ILU too */
                     Q->ILU->MultiplD = Q->MultiplD;
                     Q->ILU->MultiplU = Q->MultiplU;

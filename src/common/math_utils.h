@@ -2,6 +2,7 @@
 #define MATH_UTILS_H
 
 #include <vector>
+#include "precompiled/precompiled_header.h"
 
 namespace math_utils
 {
