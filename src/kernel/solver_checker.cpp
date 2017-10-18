@@ -148,7 +148,7 @@ double solver_checker::net_dif_norm_L2 (const difference_scheme_solver &solver, 
             double val = fabs (solver.g_val (n, m) - g (T, h * m));
             sum += val * val;
           }
-        return sqrt (sum);
+        return sqrt (h * sum);
       }
       break;
     case net_func::V:
@@ -158,7 +158,7 @@ double solver_checker::net_dif_norm_L2 (const difference_scheme_solver &solver, 
             double val = fabs (solver.v_val (n, m) - v (T, h * m));
             sum += val * val;
           }
-        return sqrt (sum);
+        return sqrt (h * sum);
       }
       break;
     }
