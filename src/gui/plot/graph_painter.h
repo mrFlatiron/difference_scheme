@@ -20,6 +20,9 @@ private:
   double m_max_abs_val = 0;
   double m_x_min;
   double m_x_max;
+  double m_x_text_shift = 15;
+  int m_x_text_points = 5;
+  int m_y_text_points = 5;
   int m_pivot_count;
   abstract_plot_model *m_plot_model = nullptr;
 public:
@@ -39,6 +42,8 @@ private:
   QPen set_pen (const int graph_num) const;
   QPointF to_scale (QPointF point);
   void draw_line (QPointF point_a, QPointF point_b);
+  void draw_text_x ();
+  void draw_text_y ();
 private slots:
   void on_model_changed ();
 };

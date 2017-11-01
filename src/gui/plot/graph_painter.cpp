@@ -29,32 +29,16 @@ void graph_painter::draw_axis ()
   temp_pen.setStyle (Qt::DashLine);
   temp_pen.setCosmetic (true);
   temp_pen.setWidth (1);
-  temp_pen.setColor (Qt::lightGray);
+  temp_pen.setColor (Qt::gray);
 
   setPen (temp_pen);
   drawLine (m_oy_shift, to_scale (QPointF (0, 0)).y (), d_width, to_scale (QPointF (0, 0)). y ());
   setPen (save_pen);
 
 
-  double med = (m_x_max + m_x_min) / 2;
-  drawText (to_scale (QPointF (m_x_min, 0)).x (), d_height - m_ox_shift + 15, QString::number (m_x_min));
-  drawText (to_scale (QPointF (med, 0)).x (), d_height - m_ox_shift + 15, QString::number (med));
-  drawText (to_scale (QPointF (m_x_max, 0)).x (), d_height - m_ox_shift + 15, QString::number (m_x_max));
+  draw_text_x ();
+  draw_text_y ();
 
-  med = (m_y_max + m_y_min) / 2;
-  double y_min_text = to_scale (QPointF (0, m_y_min)).y ();
-  double y_med_text = to_scale (QPointF (0, med)).y ();
-  double y_max_text = to_scale (QPointF (0, m_y_max)).y ();
-  double y_o_text = to_scale (QPointF (0, 0)).y ();
-
-  drawText (0, y_min_text, QString::number (m_y_min, 'e', 2));
-  drawText (0, y_med_text, QString::number (med, 'e', 2));
-  drawText (0, y_max_text, QString::number (m_y_max, 'e', 2));
-
-  if (!(fabs (y_min_text - y_o_text) < 10
-        || (fabs (y_med_text - y_o_text) < 10)
-        || (fabs (y_max_text - y_o_text) < 10)))
-    drawText (m_oy_shift - 35, y_o_text, QString::number (0));
 
   QPointF max_val_text_point = to_scale (QPointF (m_x_max, m_y_max));
   max_val_text_point.setX (max_val_text_point.x () - 120);
@@ -247,11 +231,11 @@ void graph_painter::calculate_graph_vert_bounds (const int graph_num,
 {
   calculate_pivot_count ();
 
-  bool discrete = m_plot_model->paint_config (graph_num, graph_role::discrete).toBool ();
+  bool is_discrete = m_plot_model->paint_config (graph_num, graph_role::discrete).toBool ();
 
   QPointF point;
 
-  point = get_first_graph_point (graph_num, discrete);
+  point = get_first_graph_point (graph_num, is_discrete);
 
   loc_min = point.y ();
   loc_max = point.y ();
@@ -260,7 +244,7 @@ void graph_painter::calculate_graph_vert_bounds (const int graph_num,
   int i = 0;
   while (!end)
     {
-      point = get_next_graph_point (graph_num, discrete, i, end);
+      point = get_next_graph_point (graph_num, is_discrete, i, end);
 
       if (point.y () < loc_min)
         loc_min = point.y ();
@@ -290,4 +274,58 @@ QPointF graph_painter::to_scale (QPointF point)
 void graph_painter::draw_line (QPointF point_a, QPointF point_b)
 {
   drawLine (to_scale (point_a), to_scale (point_b));
+}
+
+void graph_painter::draw_text_x ()
+{
+  int d_height = device ()->height ();
+
+  if (m_x_text_points < 2)
+    m_x_text_points = 2;
+
+  double h = (m_x_max - m_x_min) / (m_x_text_points - 1);
+
+  for (int p = 0; p < m_x_text_points - 1; p++)
+    {
+      double x_val = m_x_min + h * p;
+      drawText (to_scale (QPointF (x_val, 0)).x (), d_height - m_ox_shift + m_x_text_shift, QString::number (x_val));
+    }
+
+  drawText (to_scale (QPointF (m_x_max, 0)).x (), d_height - m_ox_shift + m_x_text_shift, QString::number (m_x_max));
+
+}
+
+void graph_painter::draw_text_y ()
+{
+
+  if (m_y_text_points < 2)
+    m_y_text_points = 2;
+
+  double h = (m_y_max - m_y_min) / (m_y_text_points - 1);
+
+  double y_o_text_pos = to_scale (QPointF (0, 0)).y ();
+
+  bool o_text_drawn = false;
+
+  for (int p = 0; p < m_y_text_points - 1; p++)
+    {
+      double y_val = m_y_min + h * p;
+      double y_text_pos = to_scale (QPointF (0, y_val)).y ();
+
+
+      if (fabs (y_text_pos - y_o_text_pos) < 10 && !o_text_drawn)
+        {
+          drawText (m_oy_shift - 35, y_o_text_pos, QString::number (0));
+          o_text_drawn = true;
+        }
+      else
+        drawText (0, y_text_pos, QString::number (y_val, 'e', 2));
+    }
+
+  double y_max_text = to_scale (QPointF (0, m_y_max)).y ();
+  drawText (0, y_max_text, QString::number (m_y_max, 'e', 2));
+
+
+
+
 }
