@@ -1,17 +1,15 @@
-#include "kernel/difference_scheme_solver.h"
-#include "kernel/solver_checker.h"
-#include "kernel/input/known_functions.h"
+#include "gui/main_window.h"
 
-int main (const int argc, const char *argv[])
+#include <QApplication>
+
+int main (int argc, char *argv[])
 {
-  (void)argc;
-  (void)argv;
 
-  solver_checker checker (10, 10, 3, 3, 3);
+  QApplication app (argc, argv);
 
-  difference_scheme_solver solver;
+  main_window w;
 
-  checker.start_testing (solver, 1, 1, mu_const);
+  w.show ();
 
-  return 0;
+  return app.exec ();
 }

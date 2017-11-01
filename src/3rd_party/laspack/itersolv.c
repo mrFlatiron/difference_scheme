@@ -26,7 +26,7 @@
 /* number of GMRES steps bevore restart */
 static int GMRESSteps = 10;
 
-Vector *JacobiIter(QMatrix *A, Vector *x, Vector *b, int MaxIter,
+Vector *JacobiIter(QMatrix_L *A, Vector *x, Vector *b, int MaxIter,
             PrecondProcType Dummy, double Omega)
 {
     int Iter;
@@ -76,7 +76,7 @@ Vector *JacobiIter(QMatrix *A, Vector *x, Vector *b, int MaxIter,
     return(x);
 }
 
-Vector *SORForwIter(QMatrix *A, Vector *x, Vector *b, int MaxIter,
+Vector *SORForwIter(QMatrix_L *A, Vector *x, Vector *b, int MaxIter,
             PrecondProcType Dummy, double Omega)
 {
     int Iter;
@@ -126,7 +126,7 @@ Vector *SORForwIter(QMatrix *A, Vector *x, Vector *b, int MaxIter,
     return(x);
 }
 
-Vector *SORBackwIter(QMatrix *A, Vector *x, Vector *b, int MaxIter,
+Vector *SORBackwIter(QMatrix_L *A, Vector *x, Vector *b, int MaxIter,
             PrecondProcType Dummy, double Omega)
 {
     int Iter;
@@ -176,7 +176,7 @@ Vector *SORBackwIter(QMatrix *A, Vector *x, Vector *b, int MaxIter,
     return(x);
 }
 
-Vector *SSORIter(QMatrix *A, Vector *x, Vector *b, int MaxIter,
+Vector *SSORIter(QMatrix_L *A, Vector *x, Vector *b, int MaxIter,
             PrecondProcType Dummy, double Omega)
 {
     int Iter;
@@ -230,7 +230,7 @@ Vector *SSORIter(QMatrix *A, Vector *x, Vector *b, int MaxIter,
     return(x);
 }
 
-Vector *ChebyshevIter(QMatrix *A, Vector *x, Vector *b, int MaxIter,
+Vector *ChebyshevIter(QMatrix_L *A, Vector *x, Vector *b, int MaxIter,
             PrecondProcType PrecondProc, double OmegaPrecond)
 {
     /*
@@ -356,7 +356,7 @@ Vector *ChebyshevIter(QMatrix *A, Vector *x, Vector *b, int MaxIter,
     return(x);
 }
 
-Vector *CGIter(QMatrix *A, Vector *x, Vector *b, int MaxIter,
+Vector *CGIter(QMatrix_L *A, Vector *x, Vector *b, int MaxIter,
             PrecondProcType PrecondProc, double OmegaPrecond)
 {
     /*
@@ -459,7 +459,7 @@ Vector *CGIter(QMatrix *A, Vector *x, Vector *b, int MaxIter,
     return(x);
 }
 
-Vector *CGNIter(QMatrix *A, Vector *x, Vector *b, int MaxIter,
+Vector *CGNIter(QMatrix_L *A, Vector *x, Vector *b, int MaxIter,
             PrecondProcType PrecondProc, double OmegaPrecond)
 {
     int Iter;
@@ -563,7 +563,7 @@ Vector *CGNIter(QMatrix *A, Vector *x, Vector *b, int MaxIter,
     return(x);
 }
 
-Vector *GMRESIter(QMatrix *A, Vector *x, Vector *b, int MaxIter,
+Vector *GMRESIter(QMatrix_L *A, Vector *x, Vector *b, int MaxIter,
             PrecondProcType PrecondProc, double OmegaPrecond)
 {
     /*
@@ -733,7 +733,7 @@ Vector *GMRESIter(QMatrix *A, Vector *x, Vector *b, int MaxIter,
     return(x);
 }
 
-Vector *BiCGIter(QMatrix *A, Vector *x, Vector *b, int MaxIter,
+Vector *BiCGIter(QMatrix_L *A, Vector *x, Vector *b, int MaxIter,
             PrecondProcType PrecondProc, double OmegaPrecond)
 {
     /*
@@ -866,7 +866,7 @@ Vector *BiCGIter(QMatrix *A, Vector *x, Vector *b, int MaxIter,
     return(x);
 }
 
-Vector *QMRIter(QMatrix *A, Vector *x, Vector *b, int MaxIter,
+Vector *QMRIter(QMatrix_L *A, Vector *x, Vector *b, int MaxIter,
             PrecondProcType PrecondProc, double OmegaPrecond)
 {
     /*
@@ -1109,7 +1109,7 @@ Vector *QMRIter(QMatrix *A, Vector *x, Vector *b, int MaxIter,
     return(x);
 }
 
-Vector *CGSIter(QMatrix *A, Vector *x, Vector *b, int MaxIter,
+Vector *CGSIter(QMatrix_L *A, Vector *x, Vector *b, int MaxIter,
             PrecondProcType PrecondProc, double OmegaPrecond)
 {
     /*
@@ -1243,7 +1243,7 @@ Vector *CGSIter(QMatrix *A, Vector *x, Vector *b, int MaxIter,
     return(x);
 }
 
-Vector *BiCGSTABIter(QMatrix *A, Vector *x, Vector *b, int MaxIter,
+Vector *BiCGSTABIter(QMatrix_L *A, Vector *x, Vector *b, int MaxIter,
             PrecondProcType PrecondProc, double OmegaPrecond)
 {
     /*

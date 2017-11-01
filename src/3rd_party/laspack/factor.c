@@ -22,10 +22,10 @@
 
 #define PEN_FACT 1e-4
 
-QMatrix *ILUFactor(QMatrix *Q)
+QMatrix_L *ILUFactor(QMatrix_L *Q)
 /* returns matrix which contains the incomplete factorized matrix Q */
 {
-    QMatrix *QRes;
+    QMatrix_L *QRes;
 
     char *QILUName;
     size_t MaxLen, Dim, RoC, RoC_, Len, Len_, ElCount, ElCount_;

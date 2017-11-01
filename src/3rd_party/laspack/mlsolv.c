@@ -23,7 +23,7 @@
 #include "rtc.h"
 #include "copyrght.h"
 
-Vector *MGStep(int NoLevels, QMatrix *A, Vector *x, Vector *b,
+Vector *MGStep(int NoLevels, QMatrix_L *A, Vector *x, Vector *b,
             Matrix *R, Matrix *P, int Level, int Gamma,
             IterProcType SmoothProc, int Nu1, int Nu2, 
 	    PrecondProcType PrecondProc, double Omega,
@@ -61,7 +61,7 @@ Vector *MGStep(int NoLevels, QMatrix *A, Vector *x, Vector *b,
     return(&x[Level]);
 }
 
-Vector *MGIter(int NoLevels, QMatrix *A, Vector *x, Vector *b,
+Vector *MGIter(int NoLevels, QMatrix_L *A, Vector *x, Vector *b,
 	    Matrix *R, Matrix *P, int MaxIter, int Gamma,
             IterProcType SmoothProc, int Nu1, int Nu2, 
 	    PrecondProcType PrecondProc, double Omega,
@@ -100,7 +100,7 @@ Vector *MGIter(int NoLevels, QMatrix *A, Vector *x, Vector *b,
     return(&x[NoLevels - 1]);
 }
 
-Vector *NestedMGIter(int NoLevels, QMatrix *A, Vector *x, Vector *b,
+Vector *NestedMGIter(int NoLevels, QMatrix_L *A, Vector *x, Vector *b,
 	    Matrix *R, Matrix *P, int Gamma,
             IterProcType SmoothProc, int Nu1, int Nu2, 
 	    PrecondProcType PrecondProc, double Omega,
@@ -137,7 +137,7 @@ Vector *NestedMGIter(int NoLevels, QMatrix *A, Vector *x, Vector *b,
     return(&x[NoLevels - 1]);
 }
 
-Vector *MGPCGIter(int NoLevels, QMatrix *A, Vector *z, Vector *r,
+Vector *MGPCGIter(int NoLevels, QMatrix_L *A, Vector *z, Vector *r,
 		   Matrix *R, Matrix *P, int MaxIter, int NoMGIter, int Gamma,
                    IterProcType SmoothProc, int Nu1, int Nu2, 
 		   PrecondProcType PrecondProc, double Omega,
@@ -201,7 +201,7 @@ Vector *MGPCGIter(int NoLevels, QMatrix *A, Vector *z, Vector *r,
     return(&z[NoLevels - 1]);
 }
 
-Vector *BPXPrecond(int NoLevels, QMatrix *A, Vector *y, Vector *c,
+Vector *BPXPrecond(int NoLevels, QMatrix_L *A, Vector *y, Vector *c,
             Matrix *R, Matrix *P, int Level, 
             IterProcType SmoothProc, int Nu, 
             PrecondProcType PrecondProc, double Omega,
@@ -232,7 +232,7 @@ Vector *BPXPrecond(int NoLevels, QMatrix *A, Vector *y, Vector *c,
     return(&y[Level]);
 }
 
-Vector *BPXPCGIter(int NoLevels, QMatrix *A, Vector *z, Vector *r,
+Vector *BPXPCGIter(int NoLevels, QMatrix_L *A, Vector *z, Vector *r,
 		   Matrix *R, Matrix *P, int MaxIter,
                    IterProcType SmoothProc, int Nu, 
 		   PrecondProcType PrecondProc, double Omega,

@@ -5,7 +5,7 @@
 
 laspack_matrix::laspack_matrix ()
 {
-  m_raw = new QMatrix;
+  m_raw = new QMatrix_L;
 }
 
 laspack_matrix::laspack_matrix (const std::vector<matrix_el> &els, const int matrix_size)
@@ -20,12 +20,12 @@ laspack_matrix::~laspack_matrix ()
   delete m_raw;
 }
 
-QMatrix *laspack_matrix::raw ()
+QMatrix_L *laspack_matrix::raw ()
 {
   return m_raw;
 }
 
-const QMatrix *laspack_matrix::raw () const
+const QMatrix_L *laspack_matrix::raw () const
 {
   return m_raw;
 }

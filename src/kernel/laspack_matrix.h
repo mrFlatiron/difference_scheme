@@ -8,15 +8,15 @@ class matrix_el;
 class laspack_matrix
 {
 private:
-  QMatrix *m_raw = nullptr;
+  QMatrix_L *m_raw = nullptr;
 public:
   laspack_matrix ();
 
   laspack_matrix (const std::vector<matrix_el> &els, const int matrix_size);
   ~laspack_matrix ();
 
-  QMatrix *raw ();
-  const QMatrix *raw () const;
+  QMatrix_L *raw ();
+  const QMatrix_L *raw () const;
 
   int n () const;
   void construct_from (const std::vector<matrix_el> &els, const int matrix_size);

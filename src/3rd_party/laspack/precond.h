@@ -21,16 +21,16 @@
 #include "qmatrix.h"
 #include "copyrght.h"
 
-typedef Vector *(*PrecondProcType)(QMatrix *, Vector *, Vector *, double);
+typedef Vector *(*PrecondProcType)(QMatrix_L *, Vector *, Vector *, double);
 
 /* declaration of preconditioners */
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-Vector *JacobiPrecond(QMatrix *A, Vector *y, Vector *c, double Omega);
-Vector *SSORPrecond(QMatrix *A, Vector *y, Vector *c, double Omega);
-Vector *ILUPrecond(QMatrix *A, Vector *y, Vector *c, double Omega);
+Vector *JacobiPrecond(QMatrix_L *A, Vector *y, Vector *c, double Omega);
+Vector *SSORPrecond(QMatrix_L *A, Vector *y, Vector *c, double Omega);
+Vector *ILUPrecond(QMatrix_L *A, Vector *y, Vector *c, double Omega);
 #ifdef __cplusplus
 }
 #endif

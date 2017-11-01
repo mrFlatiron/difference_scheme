@@ -14,7 +14,7 @@ double v (double t, double x)
 {
   (void)t;
   (void)x;
-  return x * (x - 1);
+  return sin (x);
 }
 
 double deriv_g_t (double t, double x)
@@ -42,12 +42,12 @@ double deriv_v_x (double t, double x)
 {
   (void)t;
   (void)x;
-  return 2 * x - 1;
+  return cos (x);
 }
 
 double deriv_v_xx (double t, double x)
 {
   (void)t;
   (void)x;
-  return 2;
+  return -sin (x);
 }

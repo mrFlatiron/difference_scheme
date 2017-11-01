@@ -1,7 +1,9 @@
+QT       += core gui
+
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
 TEMPLATE = app
-CONFIG += console c++11
-CONFIG -= app_bundle
-CONFIG -= qt
+CONFIG += c++11
 
 SOURCES += \
     src/main/main.cpp \
@@ -26,7 +28,12 @@ SOURCES += \
     src/3rd_party/laspack/rtc.c \
     src/3rd_party/laspack/vector.c \
     src/kernel/input/wanted_functions.cpp \
-    src/kernel/solver_checker.cpp
+    src/kernel/solver_checker.cpp \
+    src/gui/main_window.cpp \
+    src/gui/plot/abstract_plot_model.cpp \
+    src/gui/plot/graph_painter.cpp \
+    src/gui/plot/plot_widget.cpp \
+    src/gui/plot/dif_scheme_plot_model.cpp
 
 HEADERS += \
     src/precompiled/precompiled_header.h \
@@ -58,7 +65,13 @@ HEADERS += \
     src/3rd_party/laspack/vector.h \
     src/3rd_party/laspack/version.h \
     src/kernel/input/wanted_functions.h \
-    src/kernel/solver_checker.h
+    src/kernel/solver_checker.h \
+    src/gui/main_window.h \
+    src/gui/plot/abstract_plot_defs.h \
+    src/gui/plot/abstract_plot_model.h \
+    src/gui/plot/graph_painter.h \
+    src/gui/plot/plot_widget.h \
+    src/gui/plot/dif_scheme_plot_model.h
 
 INCLUDEPATH += src
 

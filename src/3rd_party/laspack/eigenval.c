@@ -33,7 +33,7 @@ typedef struct {
 /* accuracy for the estimation of extremal eigenvalues */
 static double EigenvalEps = 1e-4;
 
-static void EstimEigenvals(QMatrix *A, PrecondProcType PrecondProc, double OmegaPrecond);
+static void EstimEigenvals(QMatrix_L *A, PrecondProcType PrecondProc, double OmegaPrecond);
 static void SearchEigenval(size_t n, double *Alpha, double *Beta, size_t k,
 	        double BoundMin, double BoundMax, Boolean *Found, double *Lambda);
 static size_t NoSmallerEigenvals(size_t n, double *Alpha, double *Beta, double Lambda);
@@ -47,7 +47,7 @@ void SetEigenvalAccuracy(double Eps)
     EigenvalEps = Eps;
 }
 
-double GetMinEigenval(QMatrix *A, PrecondProcType PrecondProc, double OmegaPrecond)
+double GetMinEigenval(QMatrix_L *A, PrecondProcType PrecondProc, double OmegaPrecond)
 /* returns estimate for minimum eigenvalue of the matrix A */
 {
     double MinEigenval;
@@ -86,7 +86,7 @@ double GetMinEigenval(QMatrix *A, PrecondProcType PrecondProc, double OmegaPreco
     return(MinEigenval);             
 }
 
-double GetMaxEigenval(QMatrix *A, PrecondProcType PrecondProc, double OmegaPrecond)
+double GetMaxEigenval(QMatrix_L *A, PrecondProcType PrecondProc, double OmegaPrecond)
 /* returns estimate for maximum eigenvalue of the matrix A */
 {
     double MaxEigenval;
@@ -125,7 +125,7 @@ double GetMaxEigenval(QMatrix *A, PrecondProcType PrecondProc, double OmegaPreco
     return(MaxEigenval);             
 }
 
-static void EstimEigenvals(QMatrix *A, PrecondProcType PrecondProc, double OmegaPrecond)
+static void EstimEigenvals(QMatrix_L *A, PrecondProcType PrecondProc, double OmegaPrecond)
 /* estimates extremal eigenvalues of the matrix A by means of the Lanczos method */
 {
     /*

@@ -269,11 +269,11 @@ Vector *Add_VV(Vector *V1, Vector *V2)
     return(VRes);
 }
 
-QMatrix *Add_QQ(QMatrix *Q1, QMatrix *Q2)
+QMatrix_L *Add_QQ(QMatrix_L *Q1, QMatrix_L *Q2)
 /* QRes = Q1 + Q2, this operation is limited to matrices, which are
    derived from the same matrix */
 {
-    QMatrix *QRes;
+    QMatrix_L *QRes;
 
     char *QResName;
 
@@ -286,7 +286,7 @@ QMatrix *Add_QQ(QMatrix *Q1, QMatrix *Q2)
                 Q1->ElOrder == Q2->ElOrder &&
                 Q1->Len == Q2->Len &&
                 Q1->El == Q2->El) {
-                QRes = (QMatrix *)malloc(sizeof(QMatrix));
+                QRes = (QMatrix_L *)malloc(sizeof(QMatrix_L));
 	        QResName = (char *)malloc((strlen(Q_GetName(Q1)) + strlen(Q_GetName(Q1)) + 10)
 		           * sizeof(char));
                 if (QRes != NULL && QResName != NULL) {
@@ -405,11 +405,11 @@ Vector *Sub_VV(Vector *V1, Vector *V2)
     return(VRes);
 }
 
-QMatrix *Sub_QQ(QMatrix *Q1, QMatrix *Q2)
+QMatrix_L *Sub_QQ(QMatrix_L *Q1, QMatrix_L *Q2)
 /* QRes = Q1 - Q2, this operation ist limited to matricies, which are
    derived from the same matrix */
 {
-    QMatrix *QRes;
+    QMatrix_L *QRes;
 
     char *QResName;
 
@@ -422,7 +422,7 @@ QMatrix *Sub_QQ(QMatrix *Q1, QMatrix *Q2)
                 Q1->ElOrder == Q2->ElOrder &&
                 Q1->Len == Q2->Len &&
                 Q1->El == Q2->El) {
-                QRes = (QMatrix *)malloc(sizeof(QMatrix));
+                QRes = (QMatrix_L *)malloc(sizeof(QMatrix_L));
 	        QResName = (char *)malloc((strlen(Q_GetName(Q1)) + strlen(Q_GetName(Q1)) + 10)
 		           * sizeof(char));
                 if (QRes != NULL && QResName != NULL) {
@@ -550,17 +550,17 @@ Matrix *Mul_SM(double S, Matrix *M)
     return(MRes);
 }
 
-QMatrix *Mul_SQ(double S, QMatrix *Q)
+QMatrix_L *Mul_SQ(double S, QMatrix_L *Q)
 /* QRes = S * Q */
 {
-    QMatrix *QRes;
+    QMatrix_L *QRes;
     
     char *QResName;
 
     Q_Lock(Q);
     
     if (LASResult() == LASOK) {
-        QRes = (QMatrix *)malloc(sizeof(QMatrix));
+        QRes = (QMatrix_L *)malloc(sizeof(QMatrix_L));
 	QResName = (char *)malloc((strlen(Q_GetName(Q)) + 20) * sizeof(char));
         if (QRes != NULL && QResName != NULL) {
 	    sprintf(QResName, "%12.5e * (%s)", S, Q_GetName(Q));
@@ -737,7 +737,7 @@ Vector *Mul_MV(Matrix *M, Vector *V)
     return(VRes);
 }
 
-Vector *Mul_QV(QMatrix *Q, Vector *V)
+Vector *Mul_QV(QMatrix_L *Q, Vector *V)
 /* VRes = Q * V */
 {
     Vector *VRes;
@@ -1001,7 +1001,7 @@ Vector *Mul_QV(QMatrix *Q, Vector *V)
     return(VRes);
 }
 
-Vector *MulInv_QV(QMatrix *Q, Vector *V)
+Vector *MulInv_QV(QMatrix_L *Q, Vector *V)
 /* VRes = Q^(-1) * V, this operation is limited to diagonal or triangular
    matrices */
 {
@@ -1264,17 +1264,17 @@ Matrix *Transp_M(Matrix *M)
     return(MRes);
 }
 
-QMatrix *Transp_Q(QMatrix *Q)
+QMatrix_L *Transp_Q(QMatrix_L *Q)
 /* QRes = Q^T, returns transposed matrix Q */
 {
-    QMatrix *QRes;
+    QMatrix_L *QRes;
 
     char *QResName;
 
     Q_Lock(Q);
     
     if (LASResult() == LASOK) {
-        QRes = (QMatrix *)malloc(sizeof(QMatrix));
+        QRes = (QMatrix_L *)malloc(sizeof(QMatrix_L));
 	QResName = (char *)malloc((strlen(Q_GetName(Q)) + 10) * sizeof(char));
         if (QRes != NULL && QResName != NULL) {
 	    sprintf(QResName, "(%s)^T", Q_GetName(Q));
@@ -1331,17 +1331,17 @@ QMatrix *Transp_Q(QMatrix *Q)
     return(QRes);
 }
 
-QMatrix *Diag_Q(QMatrix *Q)
+QMatrix_L *Diag_Q(QMatrix_L *Q)
 /* QRes = Diag(Q), returns the diagonal of the matrix Q */
 {
-    QMatrix *QRes;
+    QMatrix_L *QRes;
 
     char *QResName;
 
     Q_Lock(Q);
     
     if (LASResult() == LASOK) {
-        QRes = (QMatrix *)malloc(sizeof(QMatrix));
+        QRes = (QMatrix_L *)malloc(sizeof(QMatrix_L));
 	QResName = (char *)malloc((strlen(Q_GetName(Q)) + 10) * sizeof(char));
         if (QRes != NULL && QResName != NULL) {
 	    sprintf(QResName, "Diag(%s)", Q_GetName(Q));
@@ -1385,17 +1385,17 @@ QMatrix *Diag_Q(QMatrix *Q)
     return(QRes);
 }
 
-QMatrix *Upper_Q(QMatrix *Q)
+QMatrix_L *Upper_Q(QMatrix_L *Q)
 /* QRes = Upper(Q), returns the upper triagonal part of the matrix Q */
 {
-    QMatrix *QRes;
+    QMatrix_L *QRes;
 
     char *QResName;
 
     Q_Lock(Q);
     
     if (LASResult() == LASOK) {
-        QRes = (QMatrix *)malloc(sizeof(QMatrix));
+        QRes = (QMatrix_L *)malloc(sizeof(QMatrix_L));
 	QResName = (char *)malloc((strlen(Q_GetName(Q)) + 10) * sizeof(char));
         if (QRes != NULL && QResName != NULL) {
 	    sprintf(QResName, "Upper(%s)", Q_GetName(Q));
@@ -1439,17 +1439,17 @@ QMatrix *Upper_Q(QMatrix *Q)
     return(QRes);
 }
 
-QMatrix *Lower_Q(QMatrix *Q)
+QMatrix_L *Lower_Q(QMatrix_L *Q)
 /* QRes = Lower(Q), returns the lower triagonal part of the matrix Q */
 {
-    QMatrix *QRes;
+    QMatrix_L *QRes;
 
     char *QResName;
 
     Q_Lock(Q);
     
     if (LASResult() == LASOK) {
-        QRes = (QMatrix *)malloc(sizeof(QMatrix));
+        QRes = (QMatrix_L *)malloc(sizeof(QMatrix_L));
 	QResName = (char *)malloc((strlen(Q_GetName(Q)) + 10) * sizeof(char));
         if (QRes != NULL && QResName != NULL) {
 	    sprintf(QResName, "Lower(%s)", Q_GetName(Q));
@@ -1582,7 +1582,7 @@ double MaxNorm_V(Vector *V)
     return(SRes);
 }
 
-Vector *OrthoRightKer_VQ(Vector *V, QMatrix *Q)
+Vector *OrthoRightKer_VQ(Vector *V, QMatrix_L *Q)
 /* orthogonalize vector V to the "right" null space of matrix Q */
 {
     Vector *VRes;
@@ -1635,7 +1635,7 @@ Vector *OrthoRightKer_VQ(Vector *V, QMatrix *Q)
     return(VRes);
 }
 
-Vector *OrthoLeftKer_VQ(Vector *V, QMatrix *Q)
+Vector *OrthoLeftKer_VQ(Vector *V, QMatrix_L *Q)
 /* orthogonalize vector V to the "left" null space of matrix Q */
 {
     Vector *VRes;

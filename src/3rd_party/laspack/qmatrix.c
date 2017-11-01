@@ -26,7 +26,7 @@ static ElType ZeroEl = { 0, 0.0 };
 
 static int ElCompar(const void *El1, const void *El2);
 
-void Q_Constr(QMatrix *Q, const char *Name, size_t Dim, Boolean Symmetry,
+void Q_Constr(QMatrix_L *Q, const char *Name, size_t Dim, Boolean Symmetry,
               ElOrderType ElOrder, InstanceType Instance, Boolean OwnData)
 /* constructor of the type QMatrix */
 {
@@ -56,7 +56,7 @@ void Q_Constr(QMatrix *Q, const char *Name, size_t Dim, Boolean Symmetry,
 	    Q->ZeroInDiag = (Boolean *)malloc(sizeof(Boolean));
             Q->InvDiagEl = (Real *)malloc((Dim + 1) * sizeof(Real));
 	    Q->ILUExists = (Boolean *)malloc(sizeof(Boolean));
-            Q->ILU = (QMatrix *)malloc(sizeof(QMatrix));
+            Q->ILU = (QMatrix_L *)malloc(sizeof(QMatrix_L));
 	    if (Q->Len != NULL && Q->El != NULL && Q->ElSorted != NULL
 	        && Q->DiagElAlloc != NULL && Q->DiagEl != NULL && Q->ZeroInDiag != NULL
 	        && Q->InvDiagEl != NULL && Q->ILUExists != NULL && Q->ILU != NULL) {
@@ -92,7 +92,7 @@ void Q_Constr(QMatrix *Q, const char *Name, size_t Dim, Boolean Symmetry,
     Q->EigenvalInfo = NULL;
 }
 
-void Q_Destr(QMatrix *Q)
+void Q_Destr(QMatrix_L *Q)
 /* destructor of the type QMatrix */
 {
     size_t Dim, RoC;
@@ -164,7 +164,7 @@ void Q_Destr(QMatrix *Q)
     }
 }
 
-void Q_SetName(QMatrix *Q, char *Name)
+void Q_SetName(QMatrix_L *Q, char *Name)
 /* (re)set name of the matrix Q */
 {
     if (LASResult() == LASOK) {
@@ -177,7 +177,7 @@ void Q_SetName(QMatrix *Q, char *Name)
     }
 }
 
-const char *Q_GetName(QMatrix *Q)
+const char *Q_GetName(QMatrix_L *Q)
 /* returns the name of the matrix Q */
 {
     if (LASResult() == LASOK)
@@ -186,7 +186,7 @@ const char *Q_GetName(QMatrix *Q)
         return("");
 }
 
-size_t Q_GetDim(QMatrix *Q)
+size_t Q_GetDim(QMatrix_L *Q)
 /* returns the dimension of the matrix Q */
 {
     size_t Dim;
@@ -198,7 +198,7 @@ size_t Q_GetDim(QMatrix *Q)
     return(Dim);
 }
 
-Boolean Q_GetSymmetry(QMatrix *Q)
+Boolean Q_GetSymmetry(QMatrix_L *Q)
 /* returns True if Q is symmetric otherwise False */
 {
     Boolean Symmetry;
@@ -211,7 +211,7 @@ Boolean Q_GetSymmetry(QMatrix *Q)
     return(Symmetry);
 }
 
-ElOrderType Q_GetElOrder(QMatrix *Q)
+ElOrderType Q_GetElOrder(QMatrix_L *Q)
 /* returns element order of the matrix Q */
 {
     ElOrderType ElOrder;
@@ -224,7 +224,7 @@ ElOrderType Q_GetElOrder(QMatrix *Q)
     return(ElOrder);
 }
 
-void Q_SetLen(QMatrix *Q, size_t RoC, size_t Len)
+void Q_SetLen(QMatrix_L *Q, size_t RoC, size_t Len)
 /* set the lenght of a row or column of the matrix Q */
 {
     size_t ElCount;
@@ -265,7 +265,7 @@ void Q_SetLen(QMatrix *Q, size_t RoC, size_t Len)
     }
 }
 
-size_t Q_GetLen(QMatrix *Q, size_t RoC)
+size_t Q_GetLen(QMatrix_L *Q, size_t RoC)
 /* returns the lenght of a row or column of the matrix Q */
 {
     size_t Len;
@@ -283,7 +283,7 @@ size_t Q_GetLen(QMatrix *Q, size_t RoC)
     return(Len);
 }
 
-void Q_SetEntry(QMatrix *Q, size_t RoC, size_t Entry, size_t Pos, Real Val)
+void Q_SetEntry(QMatrix_L *Q, size_t RoC, size_t Entry, size_t Pos, Real Val)
 /* set a new matrix entry */
 {
     if (LASResult() == LASOK) {
@@ -297,7 +297,7 @@ void Q_SetEntry(QMatrix *Q, size_t RoC, size_t Entry, size_t Pos, Real Val)
     }
 }
 
-size_t Q_GetPos(QMatrix *Q, size_t RoC, size_t Entry)
+size_t Q_GetPos(QMatrix_L *Q, size_t RoC, size_t Entry)
 /* returns the position of a matrix element */
 {
     size_t Pos;
@@ -314,7 +314,7 @@ size_t Q_GetPos(QMatrix *Q, size_t RoC, size_t Entry)
     return(Pos);
 }
 
-Real Q_GetVal(QMatrix *Q, size_t RoC, size_t Entry)
+Real Q_GetVal(QMatrix_L *Q, size_t RoC, size_t Entry)
 /* returns the value of a matrix element */
 {
     Real Val;
@@ -331,7 +331,7 @@ Real Q_GetVal(QMatrix *Q, size_t RoC, size_t Entry)
     return(Val);
 }
 
-void Q_AddVal(QMatrix *Q, size_t RoC, size_t Entry, Real Val)
+void Q_AddVal(QMatrix_L *Q, size_t RoC, size_t Entry, Real Val)
 /* add a value to a matrix entry */
 {
     if (LASResult() == LASOK) {
@@ -342,7 +342,7 @@ void Q_AddVal(QMatrix *Q, size_t RoC, size_t Entry, Real Val)
     }
 }
 
-Real Q_GetEl(QMatrix *Q, size_t Row, size_t Clm)
+Real Q_GetEl(QMatrix_L *Q, size_t Row, size_t Clm)
 /* returns the value of a matrix element (all matrix elements are considered) */
 {
     Real Val;
@@ -423,7 +423,7 @@ Real Q_GetEl(QMatrix *Q, size_t Row, size_t Clm)
     return(Val);
 }
 
-void Q_SortEl(QMatrix *Q)
+void Q_SortEl(QMatrix_L *Q)
 /* sorts elements of a row or column in ascended order */
 {
     size_t Dim, RoC;
@@ -459,7 +459,7 @@ void Q_SortEl(QMatrix *Q)
     }
 }
 
-void Q_AllocInvDiagEl(QMatrix *Q)
+void Q_AllocInvDiagEl(QMatrix_L *Q)
 /* allocate pointers and compute inverse for diagonal elements of the matrix Q */
 {
     size_t Dim, RoC, Len, ElCount;
@@ -531,7 +531,7 @@ static int ElCompar(const void *El1, const void *El2)
     return(Compar);
 }
 
-void Q_SetKer(QMatrix *Q, Vector *RightKer, Vector *LeftKer)
+void Q_SetKer(QMatrix_L *Q, Vector *RightKer, Vector *LeftKer)
 /* defines the null space in the case of a singular matrix */
 {
     double Sum, Mean, Cmp, Norm;
@@ -636,7 +636,7 @@ void Q_SetKer(QMatrix *Q, Vector *RightKer, Vector *LeftKer)
     V_Unlock(LeftKer);
 }
 
-Boolean Q_KerDefined(QMatrix *Q)
+Boolean Q_KerDefined(QMatrix_L *Q)
 /* returns True if Q is singular and the null space has been defined
    otherwise False */ 
 {
@@ -654,20 +654,20 @@ Boolean Q_KerDefined(QMatrix *Q)
     return(KerDefined);
 }
 
-void **Q_EigenvalInfo(QMatrix *Q)
+void **Q_EigenvalInfo(QMatrix_L *Q)
 /* return address of the infos for eigenvalues */
 {
     return(&(Q->EigenvalInfo));
 }
 
-void Q_Lock(QMatrix *Q)
+void Q_Lock(QMatrix_L *Q)
 /* lock the matrix Q */
 {
     if (Q != NULL) 
         Q->LockLevel++;
 }
 
-void Q_Unlock(QMatrix *Q)
+void Q_Unlock(QMatrix_L *Q)
 /* unlock the matrix Q */
 {
     if (Q != NULL) {

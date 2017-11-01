@@ -24,7 +24,7 @@
 extern "C"
 {
 #endif
-QMatrix *ILUFactor(QMatrix *Q);
+QMatrix_L *ILUFactor(QMatrix_L *Q);
 #ifdef __cplusplus
 }
 #endif

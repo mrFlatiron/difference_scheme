@@ -26,37 +26,37 @@
 extern "C"
 {
 #endif
-Vector *MGStep(int NoLevels, QMatrix *A, Vector *x, Vector *b,
+Vector *MGStep(int NoLevels, QMatrix_L *A, Vector *x, Vector *b,
 	    Matrix *R, Matrix *P, int Level, int Gamma,
             IterProcType SmoothProc, int Nu1, int Nu2, 
      	    PrecondProcType PrecondProc, double Omega,
             IterProcType SolvProc, int NuC,
 	    PrecondProcType PrecondProcC, double OmegaC);
-Vector *MGIter(int NoLevels, QMatrix *A, Vector *x, Vector *b,
+Vector *MGIter(int NoLevels, QMatrix_L *A, Vector *x, Vector *b,
 	    Matrix *R, Matrix *P, int MaxIter, int Gamma,
             IterProcType SmoothProc, int Nu1, int Nu2, 
 	    PrecondProcType PrecondProc, double Omega,
             IterProcType SolvProc, int NuC,
 	    PrecondProcType PrecondProcC, double OmegaC);
-Vector *NestedMGIter(int NoLevels, QMatrix *A, Vector *x, Vector *b,
+Vector *NestedMGIter(int NoLevels, QMatrix_L *A, Vector *x, Vector *b,
 	    Matrix *R, Matrix *P, int Gamma,
             IterProcType SmoothProc, int Nu1, int Nu2, 
 	    PrecondProcType PrecondProc, double Omega,
             IterProcType SolvProc, int NuC,
 	    PrecondProcType PrecondProcC, double OmegaC);
-Vector *MGPCGIter(int NoLevels, QMatrix *A, Vector *x, Vector *b,
+Vector *MGPCGIter(int NoLevels, QMatrix_L *A, Vector *x, Vector *b,
 	    Matrix *R, Matrix *P, int MaxIter, int NoMGIter, int Gamma,
             IterProcType SmoothProc, int Nu1, int Nu2, 
 	    PrecondProcType PrecondProc, double Omega,
             IterProcType SolvProc, int NuC,
 	    PrecondProcType PrecondProcC, double OmegaC);
-Vector *BPXPrecond(int NoLevels, QMatrix *A, Vector *y, Vector *c,
+Vector *BPXPrecond(int NoLevels, QMatrix_L *A, Vector *y, Vector *c,
             Matrix *R, Matrix *P, int Level,
             IterProcType SmoothProc, int Nu, 
 	    PrecondProcType PrecondProc, double Omega,
             IterProcType SmoothProcC, int NuC,
 	    PrecondProcType PrecondProcC, double OmegaC);
-Vector *BPXPCGIter(int NoLevels, QMatrix *A, Vector *x, Vector *b,
+Vector *BPXPCGIter(int NoLevels, QMatrix_L *A, Vector *x, Vector *b,
 	    Matrix *R, Matrix *P, int MaxIter,
             IterProcType SmoothProc, int Nu, 
 	    PrecondProcType PrecondProc, double Omega,

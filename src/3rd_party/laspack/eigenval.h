@@ -28,8 +28,8 @@ extern "C"
 {
 #endif
 void SetEigenvalAccuracy(double Eps);
-double GetMinEigenval(QMatrix *Q, PrecondProcType PrecondProc, double OmegaPrecond);
-double GetMaxEigenval(QMatrix *Q, PrecondProcType PrecondProc, double OmegaPrecond);
+double GetMinEigenval(QMatrix_L *Q, PrecondProcType PrecondProc, double OmegaPrecond);
+double GetMaxEigenval(QMatrix_L *Q, PrecondProcType PrecondProc, double OmegaPrecond);
 #ifdef __cplusplus
 }
 #endif
