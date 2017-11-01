@@ -35,7 +35,7 @@ void main_window::create_widgets()
   m_plot_widget = new plot_widget (m_painter.get (), this);
   m_solver = make_unique<difference_scheme_solver> (M, N, X, T, mu_const);
   m_solver->solve ();
-  m_plot_model = make_unique<dif_scheme_plot_model> (m_solver.get ());
+  m_plot_model = make_unique<dif_scheme_plot_model> (m_solver.get (), net_func::V);
   m_slider = new QSlider (Qt::Horizontal, this);
   m_slider->setMinimum (0);
   m_slider->setMaximum (N);
