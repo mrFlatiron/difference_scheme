@@ -30,6 +30,9 @@ public:
 
   double net_dif_norm_C (const difference_scheme_solver &solver, net_func func) const;
   double net_dif_norm_L2 (const difference_scheme_solver &solver, net_func func) const;
+  double net_dif_norm_L2h (const difference_scheme_solver &solver, net_func func) const;
+  double net_dif_norm_W21 (const difference_scheme_solver &solver, net_func func) const;
+  double net_dif_seminorm (const difference_scheme_solver &solver, net_func func) const;
 
   void start_testing (difference_scheme_solver &solver, double X, double T, double mu, FILE *fout = stdout);
 

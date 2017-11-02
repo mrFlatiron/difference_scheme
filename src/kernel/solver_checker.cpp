@@ -166,6 +166,88 @@ double solver_checker::net_dif_norm_L2 (const difference_scheme_solver &solver, 
   return 0;
 }
 
+double solver_checker::net_dif_norm_L2h (const difference_scheme_solver &solver, net_func func) const
+{
+  int M = solver.M ();
+  int N = solver.N ();
+  double h = solver.var_incr (variable::x);
+  double sum = 0;
+  double T = solver.T ();
+  double X = solver.X ();
+  int n = N;
+  switch (func)
+    {
+    case net_func::G:
+      {
+        double val = fabs (solver.g_val (n, 0) - g (T, 0));
+        sum += 0.5 * val * val * h;
+        val = fabs (solver.g_val (n, M) - g (T, X));
+        sum += 0.5 * val * val * h;
+
+        for (int m = 0; m <= M; m++)
+          {
+            double val = fabs (solver.g_val (n, m) - g (T, h * m));
+            sum += h * val * val;
+          }
+        return sqrt (sum);
+      }
+      break;
+    case net_func::V:
+      {
+        double val = fabs (solver.v_val (n, 0) - v (T, 0));
+        sum += 0.5 * val * val * h;
+        val = fabs (solver.v_val (n, M) - v (T, X));
+        sum += 0.5 * val * val * h;
+
+        for (int m = 1; m < M; m++)
+          {
+            double val = fabs (solver.v_val (n, m) - v (T, h * m));
+            sum += val * val * h;
+          }
+        return sqrt (sum);
+      }
+      break;
+    }
+  DEBUG_PAUSE ("Shouldn't happen");
+  return 0;
+}
+
+double solver_checker::net_dif_norm_W21 (const difference_scheme_solver &solver, net_func func) const
+{
+  return sqrt (net_dif_norm_L2h (solver, func) * net_dif_norm_L2h (solver, func) +
+               net_dif_seminorm (solver, func) * net_dif_seminorm (solver, func));
+}
+
+double solver_checker::net_dif_seminorm (const difference_scheme_solver &solver, net_func func) const
+{
+  int M = solver.M ();
+  int N = solver.N ();
+  double T = solver.T ();
+//  double X = solver.X ();
+  double h = solver.var_incr (variable::x);
+  double sum = 0;
+
+  auto wanted_deriv = [func] (double t, double x)
+  {
+      switch (func)
+        {
+        case net_func::G:
+          return deriv_g_x (t, x);
+        case net_func::V:
+          return deriv_v_x (t, x);
+        }
+      return 0.;
+    };
+
+  for (int m = 0; m < M; m++)
+    {
+      double val = fabs (solver.deriv_any_x (func, N, m) - wanted_deriv (T, h * m));
+      sum += val * val * h;
+    }
+
+  return sqrt (sum);
+}
+
 void solver_checker::start_testing (difference_scheme_solver &solver, double X, double T, double mu, FILE *fout)
 {
   m_X = X;
@@ -173,8 +255,11 @@ void solver_checker::start_testing (difference_scheme_solver &solver, double X, 
 
   std::vector<double> G_C_norms;
   std::vector<double> G_L2_norms;
+  std::vector<double> G_W21_norms;
   std::vector<double> V_C_norms;
   std::vector<double> V_L2_norms;
+  std::vector<double> V_W21_norms;
+
 
   solver.disable_printing ();
 
@@ -195,16 +280,20 @@ void solver_checker::start_testing (difference_scheme_solver &solver, double X, 
 
           G_C_norms.push_back (net_dif_norm_C  (solver, net_func::G));
           G_L2_norms.push_back (net_dif_norm_L2 (solver, net_func::G));
+          G_W21_norms.push_back (net_dif_norm_W21 (solver, net_func::G));
           V_C_norms.push_back (net_dif_norm_C  (solver, net_func::V));
           V_L2_norms.push_back (net_dif_norm_L2 (solver, net_func::V));
+          V_W21_norms.push_back (net_dif_norm_W21 (solver, net_func::V));
 
         }
     }
   print_testing_config ();
   print_table ("g C norms", G_C_norms, fout);
   print_table ("g L2 norms", G_L2_norms, fout);
+  print_table ("g W21 norms", G_W21_norms, fout);
   print_table ("v C norms", V_C_norms, fout);
   print_table ("v L2 norms", V_L2_norms, fout);
+  print_table ("v W21 norms", V_W21_norms, fout);
 }
 
 std::string solver_checker::double_to_string (double d)

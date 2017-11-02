@@ -111,6 +111,18 @@ double difference_scheme_solver::var_incr (const variable var) const
   return 0;
 }
 
+int difference_scheme_solver::max_node (variable var) const
+{
+  switch (var)
+    {
+    case variable::t:
+      return N ();
+    case variable::x:
+      return M ();
+    }
+  return -1;
+}
+
 solver_state difference_scheme_solver::state () const
 {
   return m_state;
@@ -367,6 +379,30 @@ double difference_scheme_solver::deriv_t (const std::vector<net_func> &product, 
   return deriv (product, types, variable::t, scheme_point (n, m));
 }
 
+double difference_scheme_solver::deriv_any (variable var, net_func f, int n, int m) const
+{
+  int var_node;
+
+  switch (var)
+    {
+    case variable::t:
+      var_node = n;
+      break;
+    case variable::x:
+      var_node = m;
+      break;
+    }
+
+  auto sp = scheme_point (n, m);
+
+  if (var_node == 0)
+    return deriv ({f}, {deriv_type::fw}, var, sp);
+  if (var_node == max_node (var))
+    return deriv ({f}, {deriv_type::bw}, var, sp);
+
+  return deriv ({f}, {deriv_type::wide}, var, sp);
+}
+
 void difference_scheme_solver::set_coef (const net_func f, const int row, const int m, const double val)
 {
   int col;
@@ -447,21 +483,27 @@ double difference_scheme_solver::T () const
   return m_T;
 }
 
-double difference_scheme_solver::deriv_x_any (net_func f, int n, int m) const
+double difference_scheme_solver::deriv_any_x (net_func f, int n, int m) const
 {
-  if (m < 0 || m > m_M)
+  if (m < 0 || m > M ())
     {
       DEBUG_PAUSE ("Out of range");
       return 0;
     }
 
-  if (m == 0)
-    return deriv_x ({f}, {deriv_type::fw}, n, m);
-  if (m == M ())
-    return deriv_x ({f}, {deriv_type::bw}, n, m);
+  return deriv_any (variable::x, f, n, m);
 
-  return deriv_x ()
+}
 
+double difference_scheme_solver::deriv_any_t(net_func f, int n, int m) const
+{
+  if (n < 0 || n > N ())
+    {
+      DEBUG_PAUSE ("Out of range");
+      return 0;
+    }
+
+  return deriv_any (variable::t, f, n, m);
 }
 
 void difference_scheme_solver::disable_printing ()

@@ -27,9 +27,9 @@ main_window::~main_window ()
 
 void main_window::create_widgets()
 {
-  int M = 300;
-  int N = 300;
-  double X = 10;
+  int M = 600;
+  int N = 450;
+  double X = M_PI;
   double T = 1;
 
   m_painter = make_unique<graph_painter> ();

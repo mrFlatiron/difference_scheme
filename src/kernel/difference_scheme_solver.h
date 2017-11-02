@@ -46,6 +46,7 @@ public:
   double gas_mass (int n) const;
 
   double var_incr (const variable var) const;
+  int max_node (variable var) const;
 
   solver_state state () const;
   int nodes_count () const;
@@ -54,8 +55,8 @@ public:
   double X () const;
   double T () const;
 
-  double deriv_x_any (net_func f, int n, int m) const;
-  double deriv_t_any (net_func f, int n, int m) const;
+  double deriv_any_x (net_func f, int n, int m) const;
+  double deriv_any_t (net_func f, int n, int m) const;
 
   void disable_printing ();
 private:
@@ -90,6 +91,8 @@ private:
   double deriv_t (const std::vector<net_func> &product,
                   const std::vector<deriv_type> &types,
                   const int n, const int m) const;
+
+  double deriv_any (variable var, net_func f, int n, int m) const;
 
   void set_coef (const net_func f, const int row, const int m, const double val);
   void set_rhs_val (const int row, const double val);
