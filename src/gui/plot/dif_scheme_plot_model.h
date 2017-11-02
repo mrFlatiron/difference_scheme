@@ -13,7 +13,7 @@ private:
   int m_cut = 0;
   net_func m_func = net_func::V;
 public:
-  dif_scheme_plot_model (difference_scheme_solver *solver = nullptr, net_func func = net_func::V);
+  dif_scheme_plot_model (difference_scheme_solver *solver = nullptr, net_func func = net_func::G);
   ~dif_scheme_plot_model ();
 
   virtual int graphs_count () const override;
@@ -27,6 +27,8 @@ public:
   virtual void bounds (const int graph_num, double &left, double &right) const override;
 
   void set_cut (int cut);
+
+  net_func func () const;
 
 };
 

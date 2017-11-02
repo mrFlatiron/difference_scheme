@@ -85,6 +85,14 @@ double difference_scheme_solver::val (const net_func func,
   return 0;
 }
 
+double difference_scheme_solver::gas_mass (int n) const
+{
+  double sum = 0;
+  for (int m = 0; m < M (); m++)
+    sum += gas_mass_local (n, m);
+  return sum;
+}
+
 double difference_scheme_solver::val (const net_func func, const scheme_point p) const
 {
   return val (func, p.n (), p.m ());
@@ -406,6 +414,14 @@ double difference_scheme_solver::layer_norm (const int n) const
   return max;
 }
 
+double difference_scheme_solver::gas_mass_local (int n, int m) const
+{
+  if (m_state != solver_state::solved)
+    return 0;
+
+  return exp (g_val (n, m)) * m_h;
+}
+
 int difference_scheme_solver::nodes_count () const
 {
   return (m_M + 1) * (m_N + 1);
@@ -429,6 +445,23 @@ double difference_scheme_solver::X () const
 double difference_scheme_solver::T () const
 {
   return m_T;
+}
+
+double difference_scheme_solver::deriv_x_any (net_func f, int n, int m) const
+{
+  if (m < 0 || m > m_M)
+    {
+      DEBUG_PAUSE ("Out of range");
+      return 0;
+    }
+
+  if (m == 0)
+    return deriv_x ({f}, {deriv_type::fw}, n, m);
+  if (m == M ())
+    return deriv_x ({f}, {deriv_type::bw}, n, m);
+
+  return deriv_x ()
+
 }
 
 void difference_scheme_solver::disable_printing ()

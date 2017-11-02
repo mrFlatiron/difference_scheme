@@ -278,8 +278,6 @@ void graph_painter::draw_line (QPointF point_a, QPointF point_b)
 
 void graph_painter::draw_text_x ()
 {
-  int d_height = device ()->height ();
-
   if (m_x_text_points < 2)
     m_x_text_points = 2;
 
@@ -288,10 +286,10 @@ void graph_painter::draw_text_x ()
   for (int p = 0; p < m_x_text_points - 1; p++)
     {
       double x_val = m_x_min + h * p;
-      drawText (to_scale (QPointF (x_val, 0)).x (), d_height - m_ox_shift + m_x_text_shift, QString::number (x_val));
+      draw_text_notch_x_local (x_val);
     }
 
-  drawText (to_scale (QPointF (m_x_max, 0)).x (), d_height - m_ox_shift + m_x_text_shift, QString::number (m_x_max));
+  draw_text_notch_x_local (m_x_max);
 
 }
 
@@ -303,29 +301,74 @@ void graph_painter::draw_text_y ()
 
   double h = (m_y_max - m_y_min) / (m_y_text_points - 1);
 
-  double y_o_text_pos = to_scale (QPointF (0, 0)).y ();
-
-  bool o_text_drawn = false;
-
   for (int p = 0; p < m_y_text_points - 1; p++)
     {
       double y_val = m_y_min + h * p;
-      double y_text_pos = to_scale (QPointF (0, y_val)).y ();
-
-
-      if (fabs (y_text_pos - y_o_text_pos) < 10 && !o_text_drawn)
-        {
-          drawText (m_oy_shift - 35, y_o_text_pos, QString::number (0));
-          o_text_drawn = true;
-        }
-      else
-        drawText (0, y_text_pos, QString::number (y_val, 'e', 2));
+      draw_text_notch_y_local (y_val);
     }
 
-  double y_max_text = to_scale (QPointF (0, m_y_max)).y ();
-  drawText (0, y_max_text, QString::number (m_y_max, 'e', 2));
+  draw_text_notch_y_local (m_y_max);
 
+}
 
+void graph_painter::draw_text_notch_x_local (double x_val)
+{
+  int d_height = device ()->height ();
+  QString text_str = QString::number (x_val, 'g', 3);
+  double text_pos_x = to_scale (QPointF (x_val, 0)).x () - center_of_the_string_x (text_str);
+  double text_pos_y = d_height - m_ox_shift + m_x_text_shift;
+  drawText (text_pos_x, text_pos_y, text_str);
 
+  drawLine (QPointF (to_scale (QPointF (x_val, 0)).x (), d_height - m_ox_shift),
+            QPointF (to_scale (QPointF (x_val, 0)).x (), d_height - m_ox_shift - m_notch_length));
+}
 
+void graph_painter::draw_text_notch_y_local (double y_val)
+{
+  double y_notch_pos = to_scale (QPointF (0, y_val)).y ();
+  double y_text_pos = y_notch_pos + center_of_the_string_y ();
+  QString text = y_text_str (y_val);
+  double x_text_pos = m_oy_shift - str_plot_length (text) - 10;
+
+  drawText (x_text_pos, y_text_pos, text);
+
+  drawLine (QPointF (m_oy_shift, y_notch_pos),
+            QPointF (m_oy_shift + m_notch_length, y_notch_pos));
+}
+
+double graph_painter::char_length () const
+{
+  return 6;
+}
+
+double graph_painter::center_of_the_string_x (const QString &str) const
+{
+  int l = str.length ();
+  double s1 = (l / 2) * char_length ();
+  double s2 = (l % 2) ? char_length () / 2 : 0;
+
+  return s1 + s2;
+}
+
+double graph_painter::center_of_the_string_y () const
+{
+  return 5;
+}
+
+double graph_painter::str_plot_length (const QString &str) const
+{
+  return char_length () * str.length ();
+}
+
+QString graph_painter::y_text_str (double y_val) const
+{
+  double abs_y_val = fabs (y_val);
+  if (abs_y_val < 1e-5)
+    return QString::number (y_val, 'e', 2);
+
+  QString cand = QString::number (y_val, 'g', 3);
+  if (cand.length () > 7)
+    return QString::number (y_val, 'e', 2);
+
+  return cand;
 }

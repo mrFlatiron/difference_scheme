@@ -43,6 +43,8 @@ public:
   double val (const net_func func, const int n, const int m) const;
   double val (const net_func func, scheme_point p) const;
 
+  double gas_mass (int n) const;
+
   double var_incr (const variable var) const;
 
   solver_state state () const;
@@ -51,6 +53,9 @@ public:
   int N () const;
   double X () const;
   double T () const;
+
+  double deriv_x_any (net_func f, int n, int m) const;
+  double deriv_t_any (net_func f, int n, int m) const;
 
   void disable_printing ();
 private:
@@ -92,7 +97,7 @@ private:
 
   double layer_norm (const int n) const; // ||e^(-G)||_C
 
-
+  double gas_mass_local (int n, int m) const;
 };
 
 #endif // DIFFERENCE_SCHEME_SOLVER_H

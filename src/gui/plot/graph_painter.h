@@ -11,7 +11,7 @@ class graph_painter : public QPainter
 private:
   double m_x_scale = 1;
   double m_y_scale = 1;
-  double m_smooth = 100;
+  double m_smooth = 300;
   double m_graphs_shift = 15;
   double m_ox_shift = 50;
   double m_oy_shift = 70;
@@ -21,9 +21,11 @@ private:
   double m_x_min;
   double m_x_max;
   double m_x_text_shift = 15;
-  int m_x_text_points = 5;
-  int m_y_text_points = 5;
+  double m_notch_length = 5;
+  int m_x_text_points = 10;
+  int m_y_text_points = 10;
   int m_pivot_count;
+
   abstract_plot_model *m_plot_model = nullptr;
 public:
   graph_painter ();
@@ -44,6 +46,13 @@ private:
   void draw_line (QPointF point_a, QPointF point_b);
   void draw_text_x ();
   void draw_text_y ();
+  void draw_text_notch_x_local (double x_val);
+  void draw_text_notch_y_local (double y_val);
+  double char_length () const;
+  double center_of_the_string_x (const QString &str) const;
+  double center_of_the_string_y () const;
+  double str_plot_length (const QString &str) const;
+  QString y_text_str (double y_val) const;
 private slots:
   void on_model_changed ();
 };

@@ -30,7 +30,9 @@ QPointF dif_scheme_plot_model::point_by_num (const int graph_num, const int poin
   (void)graph_num;
   int m = point_num;
 
-  return QPointF (m * m_solver->var_incr (variable::x), m_solver->val (m_func, m_cut, m));
+  auto maybe_exp = [this] (double v) {return this->func () == net_func::G ? exp (v) : v;};
+
+  return QPointF (m * m_solver->var_incr (variable::x), maybe_exp (m_solver->val (m_func, m_cut, m)));
 }
 
 QVariant dif_scheme_plot_model::paint_config (const int graph_num, const graph_role role) const
@@ -63,6 +65,11 @@ void dif_scheme_plot_model::set_cut (int cut)
 {
   m_cut = cut;
   model_changed ();
+}
+
+net_func dif_scheme_plot_model::func () const
+{
+  return m_func;
 }
 
 

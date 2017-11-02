@@ -11,6 +11,7 @@ class graph_painter;
 class dif_scheme_plot_model;
 class difference_scheme_solver;
 class QSlider;
+class QLabel;
 
 class main_window : public QDialog
 {
@@ -21,6 +22,10 @@ private:
   std::unique_ptr<dif_scheme_plot_model> m_plot_model;
   std::unique_ptr<difference_scheme_solver> m_solver;
   QSlider *m_slider;
+  QLabel *m_pre_gas_mass_lbl;
+  QLabel *m_gas_mass_lbl;
+  QLabel *m_pre_t_lbl;
+  QLabel *m_t_cut_lbl;
 public:
   main_window (QWidget *parent = nullptr);
   ~main_window ();
