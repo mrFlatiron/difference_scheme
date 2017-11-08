@@ -1,0 +1,71 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\newcommand{\w}{\widetilde}
+\voffset = -2cm 
+\footskip=200pt
+\begin{document}
+\begin{center}
+
+\textsc{Численное моделирование нестационарного 
+    одномерного течения газа с использованием схемы 
+    для логарифма плотности с центральными разностями}
+
+\end{center}
+
+\enlargethispage{9\baselineskip}
+
+\section{Постановка дифференциальной задачи}
+Одномерное движение вязкого баротропного газа описывается системой дифференциальных уравнений:
+$$
+\begin{cases} 
+\displaystyle{\frac{\partial \rho}{\partial t} +
+ \frac{\partial \rho u}{\partial x} = 0}, \\
+
+\displaystyle{\rho \frac{\partial u}{\partial t} +
+ \rho u \frac{\partial u}{\partial x}+ 
+ \frac{\partial p}{\partial x} = 
+\mu \frac{\partial^2 u}{\partial x^2}
++ \rho f}
+\end{cases}
+$$
+
+\begin{center}
+$
+p = p (\rho)
+$ - известная функция давления от плотности
+\end{center}
+$$\mu \in [0,001; 0,1]$$
+
+Неизвестные функции плотности и скорости:
+
+\begin{center}
+$\rho,\ u: [0, T] \times [0, X] \rightarrow \mathbb{R}$, где $T,\ X > 0$
+\end{center}
+
+$$\rho > 0$$
+
+Краевые условия:
+$$(\rho, u)|_{t=0} = (\rho_0, u_0), x \in [0, X]$$
+
+Для гарантирования положительности $\rho$ вместо функции $\rho$ имеет смысл искать функцию $g = \ln(\rho)$ 
+
+Тогда система дифференциальных уравнений примет вид
+
+$$
+\begin{cases}
+\displaystyle{\frac{\partial g}{\partial t} + \frac{1}{2} \left(u\frac{\partial g}{\partial x} +     \frac{\partial ug}{\partial x} +(2-g)\frac{\partial u}{\partial x}\right) = 0},\\
+\displaystyle{\frac{\partial u}
+{\partial t} + \frac{1}{3} \left(u 
+\frac{\partial u}{\partial x} +
+ \frac{\partial u^2}{\partial x}\right) +
+  \tilde{p}'(g)
+ \frac{\partial g}{\partial x} = \mu
+  e^{-g}\frac{\partial^2 u}{\partial x^2} +
+   f}
+\end{cases}
+$$
+
+\end{document}
