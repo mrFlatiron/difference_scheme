@@ -27,8 +27,8 @@ main_window::~main_window ()
 
 void main_window::create_widgets()
 {
-  int M = 500;
-  int N = 500;
+  int M = 400;
+  int N = 400;
   double X = 10;
   double T = 1;
 
