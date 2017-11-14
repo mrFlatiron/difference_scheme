@@ -6,6 +6,11 @@
 \newcommand{\w}{\widetilde}
 \voffset = -2cm 
 \footskip=200pt
+\hoffset = -1cm
+
+\newcommand{\wide}{
+\stackrel{0}{x}
+}
 \begin{document}
 \begin{center}
 
@@ -35,7 +40,9 @@ $$
 \begin{center}
 $
 p = p (\rho)
-$ - известная функция давления от плотности
+$ - известная функция давления от плотности. 
+
+$f$ - известная функция от $(t, x)$.
 \end{center}
 $$\mu \in [0,001; 0,1]$$
 
@@ -67,5 +74,94 @@ $$
    f}
 \end{cases}
 $$
+
+\section{Построение разностной схемы}
+Для численного решения системы введем сетку на области $[0, T] \times [0, X]$ с шагом $h$ по оси $OX$ и $\tau$ по оси $OT$. Узел сетки с координатами $(n, m)$ соответствует точке $(n\tau, mh)$ области. Для разностных операторов и значений в узлах сетки будем использовать обозначения, введенные в пособии к вычислительному практикуму.
+
+$M$ - количество узлов вдоль оси $OX$.
+$N$ - количество узлов вдоль оси $OT$.
+
+Запишем разностную схему:
+
+$$
+\begin{cases}
+\displaystyle{G_t + \frac{1}{2}(V\hat{G}_{\wide} + (V\hat{G})_{\wide} + (2-G)V_{\wide}) = f_0},\ \ \ 1 \leqslant m \leqslant M - 1,\\
+\displaystyle{G_{t,0} + \frac{1}{2} ((V\hat{G})_{x,0} + (2 - G_0)V_{x, 0})} - \\
+\displaystyle{
+-\frac{h}{2}((GV)_{x\overline{x}, 1} - 
+\frac{1}{2}(GV)_{x\overline{x}, 2} + (2 - G_0)
+(V_{x\overline{x}, 1} - 
+\frac{1}{2}V_{x\overline{x}, 2})) = (f_0)_0},\\
+\displaystyle{
+G_{t, M} + \frac{1}{2}((V\hat{G})_{\overline{x}, M} + (2 - G_M)V_{\overline{x}, M}) +} \\ 
+\displaystyle{+\frac{h}{2}((GV)_{x\overline{x}, M-1} - 
+\frac{1}{2}(GV)_{x\overline{x}, M-2} + 
+(2-G_M)(V_{x\overline{x}, M - 1} - 
+\frac{1}{2}V_{x\overline{x}, M-2})) = (f_0)_M},\\
+\displaystyle{V_t + \frac{1}{3}(V\hat{V}_{\wide} + (V\hat{V}_{\wide})) + \tilde{p}'(\hat{G})\hat{G}_{\wide} = \tilde{\mu}\hat{V}_{x\overline{x}} - 
+(\tilde{\mu} - \mu e^{-\hat{G}})V_{x\overline{x}} + f},\ \ \  1 \leqslant m \leqslant M - 1,
+\end{cases}
+$$
+где $\tilde{\mu} = \mu\vert\vert e^{-\hat{G}}\vert\vert_C$.
+\\[5pt]
+Запишем эту схему в следующем виде, сгруппировав слагаемые:
+
+$$
+\begin{cases}
+\displaystyle{
+G_{m-1}^{n+1} \left(\frac{-V_{m}^n}{2h}\right) + G_m^{n+1} \left(\frac{1}{\tau} + \frac{1}{2}\left(V_{\wide}\right)_m^n\right) +}\\
+\displaystyle{ +
+G_{m+1}^{n+1} \left(\frac{V_m^n}{2h}\right) + V_{m+1}^{n+1} \left(\frac{1}{2h}\right) + V_{m-1}^{n+1}\left(\frac{1}{2h}\right) =} \\
+\displaystyle{
+= 
+f_0 (n\tau, mh) + G_m^n \left(\frac{1}{\tau} 
++\frac{1}{2} \left(V_{\wide}\right)_m^n\right)
+,\ \ \  1 \leqslant m \leqslant M - 1} & (1)\\
+\displaystyle{
+G_0^{n+1} \left(\frac{1}{\tau} + \frac{(V_x)_0^n}{2}\right)
+ + V^{n+1}_1 \left(\frac{1}{h}\right) = 
+ f_0 (n\tau, 0) + \frac{G_0^n}{\tau} + } \\
+ \displaystyle{ +\frac{h}{2} \left( ((GV)_{x\overline{x}})_1^n -\frac{1}{2}((GV)_{x\overline{x}})_1^n + (2 - G_0^n)((V_{x\overline{x}})_1^n - \frac{1}{2}(V_{x\overline{x}})_2^n)\right) + G_0^n \frac{(V_x)_0^n}{2} }, & (2)\\
+ \displaystyle{
+G_{M}^{n+1} \left(\frac{1}{\tau} + \frac{\left(V_{\overline{x}}\right)_M^n}{2}\right) + V_{M-1}^{n+1} \left(-\frac{1}{h}\right) = 
+f_0(n\tau, X) + \frac{G_M^n}{\tau} + G_M^n \frac{V_{\overline{x}}}{2} - } \\
+\displaystyle{
+-\frac{h}{2}\left(((GV)_{x\overline{x}})_{M-1}^n
+-\frac{1}{2}((GV)_{x\overline{x}})_{M-2}^n + (2-G_M^n)(V_{x\overline{x}})_{M-1}^n - 
+\frac{1}{2}(V_{x\overline{x}})_{M-2}^n\right)}, & (3)\\
+\displaystyle{
+V_{m-1}^{n+1} \left(-\frac{V_m^n}{3h}-\left(\frac{\mu \vert\vert e^{-\hat{G}}\vert\vert_C}{h^2} \right) \right) + 
+V_m^{n+1} \left(\frac{1}{\tau} + \frac{(V_{\wide})_m^n}{3} + \frac{2\mu \vert\vert e^{-\hat{G}}\vert\vert_C}{h^2}\right) +} \\
+\displaystyle {
+V_{m+1}^{n+1}\left(\frac{V_m^n}{3h} - 
+\frac{\mu \vert\vert e^{-\hat{G}}\vert\vert_C}{h^2}\right) + G_{m-1}^{n+1}\left(-\tilde{p}'\frac{G_m^n}{2h}\right) + 
+G_{m+1}^{n+1}\left(
+\tilde{p}'\frac{G_m^n}{2h}\right) = } \\
+\displaystyle{
+ f(n\tau, mh) - (V_{x\overline{x}})_m^n \left(\mu \vert\vert e^{-\hat{G}}\vert\vert_C - \mu e^{-G_m^n} + \frac{V_m^n}{\tau}\right),\ \ \ 1 \leqslant m \leqslant M-1} & (4)
+\end{cases}
+$$
+Будем называть \textit{$n$-ым слоем} узлы сетки с координатой по времени равной $n$.
+\enlargethispage{9\baselineskip}
+Заметим, что значения $V$ и $G$ известны на нулевом слое.
+При известных значениях функции на слое $n$, с помощью системы уравнений, можно вычислить значения функций на $n+1$ слое. Покажем, как уравнения $(1)-(4)$ формируют необходимую СЛАУ $(*)$.
+
+Уравнение $(1)$ для $m = 1$ и $m=M-1$ содержит четыре неизвестных, т.к. $V_0 = V_M = 0$ на любом слое. Для $2 \leqslant m \leqslant M - 2$ уравнение $(1)$ содержит пять неизвестных.\\ 
+$m$, пробегая в уравнении $(1)$ значения от $1$ до $M - 1$, формирует $M-1$ уравнение в системе $(*)$ для неизвестных $G_0^{n+1}, \ldots , G_M^{n+1}$ и $V_1^{n+1}, \ldots , V_{M-1}^{n+1}$
+
+Уравнение $(2)$ дает 1 уравнение в СЛАУ $(*)$ для неизвестных $G_0^{n+1}, V_1^{n+1}$.
+
+Уравнение $(3)$ дает 1 уравнение в СЛАУ $(*)$ для неизвестных $G_M^{n+1}, V_{M-1}^{n+1}$.
+
+Уравнение $(4)$ для $m =1$ и $m = M-1$ содержит четыре неизвестных, по тем же причинам, что и уравнение $(1)$, и пять при $2 \leqslant m \leqslant M - 2$.\\
+$m$, пробегая в уравнении $(4)$ значения от $1$ до $M - 1$, формирует $M-1$ уравнение в системе $(*)$ для неизвестных $G_0^{n+1}, \ldots , G_M^{n+1}$ и $V_1^{n+1}, \ldots , V_{M-1}^{n+1}$
+
+И так, СЛАУ $(*)$ является системой с $(M+1) + (M-1) = 2M$ неизвестными и $(M-1) + 1 + 1 + (M-1) = 2M$ уравнениями. В каждом уравнении не более пяти ненулевых коэффициентов.
+
+Таким образом СЛАУ $(*)$ является разреженной, что делает естественным применение итерационных алгоритмов для ее решения.
+
+Последовательно решая такие СЛАУ для $1 \leqslant n \leqslant N$, получим значения $G$ и $V$ во всех узлах сетки.
+
+\section{Результаты тестовых расчетов для гладких решений}
 
 \end{document}

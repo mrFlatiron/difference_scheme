@@ -32,16 +32,20 @@ void main_window::create_widgets()
   double X = 10;
   double T = 1;
 
-  m_painter = make_unique<graph_painter> ();
-  m_plot_widget = new plot_widget (m_painter.get (), this);
+  m_painter_G = make_unique<graph_painter> ();
+  m_painter_V = make_unique<graph_painter> ();
+  m_plot_widget_G = new plot_widget (m_painter_G.get (), this);
+  m_plot_widget_V = new plot_widget (m_painter_V.get (), this);
   m_solver = make_unique<difference_scheme_solver> (M, N, X, T, mu_const);
   m_solver->solve ();
-  m_plot_model = make_unique<dif_scheme_plot_model> (m_solver.get (), net_func::V);
+  m_plot_model_G = make_unique<dif_scheme_plot_model> (m_solver.get (), net_func::G);
+  m_plot_model_V = make_unique<dif_scheme_plot_model> (m_solver.get (), net_func::V);
   m_slider = new QSlider (Qt::Horizontal, this);
   m_slider->setMinimum (0);
   m_slider->setMaximum (N);
   m_slider->setValue (0);
-  m_painter->set_model (m_plot_model.get ());
+  m_painter_G->set_model (m_plot_model_G.get ());
+  m_painter_V->set_model (m_plot_model_V.get ());
   m_pre_gas_mass_lbl = new QLabel ("Mass : ", this);
   m_gas_mass_lbl = new QLabel (this);
   m_gas_mass_lbl->setText (QString::number (m_solver->gas_mass (0)));
@@ -55,7 +59,8 @@ void main_window::set_layout ()
 {
   QVBoxLayout *vlo_0 = new QVBoxLayout;
   {
-    vlo_0->addWidget (m_plot_widget);
+    vlo_0->addWidget (m_plot_widget_G);
+    vlo_0->addWidget (m_plot_widget_V);
     vlo_0->addWidget (m_slider);
     QHBoxLayout *hlo_1 = new QHBoxLayout;
     {
@@ -78,13 +83,15 @@ void main_window::set_layout ()
 
 void main_window::make_connections ()
 {
-  connect (m_plot_model.get (), SIGNAL (model_changed ()), m_plot_widget, SLOT (update ()));
+  connect (m_plot_model_G.get (), SIGNAL (model_changed ()), m_plot_widget_G, SLOT (update ()));
+  connect (m_plot_model_V.get (), SIGNAL (model_changed ()), m_plot_widget_V, SLOT (update ()));
   connect (m_slider, SIGNAL (valueChanged (int)), this, SLOT (on_slider_moved (int)));
 }
 
 void main_window::on_slider_moved (int val)
 {
-  m_plot_model->set_cut (val);
+  m_plot_model_G->set_cut (val);
+  m_plot_model_V->set_cut (val);
   m_gas_mass_lbl->setText (QString::number (m_solver->gas_mass (val)));
   m_t_cut_lbl->setText (QString::number (val * m_solver->var_incr (variable::t)));
 }
