@@ -13,13 +13,14 @@ solver_checker::~solver_checker ()
 
 }
 
-solver_checker::solver_checker (int x_multiplier, int t_multiplier, int M_start, int N_start, int table_size)
+solver_checker::solver_checker (int x_multiplier, int t_multiplier, int M_start, int N_start, int table_size, bool latex_format)
 {
   m_x_multiplier = x_multiplier;
   m_t_multiplier = t_multiplier;
   m_M_start = M_start;
   m_N_start = N_start;
   m_table_size = table_size;
+  m_latex_format = latex_format;
 }
 
 void solver_checker::print_testing_config (FILE *fout) const
@@ -37,7 +38,10 @@ void solver_checker::print_table (const std::string &table_name, const std::vect
 {
   std::vector<std::string> table_entries;
   int n = m_table_size + 1;
-  table_entries.emplace_back ("N\\M");
+  if (!m_latex_format)
+    table_entries.emplace_back ("N\\M");
+  else
+    table_entries.emplace_back ("N\\textbackslash M");
   for (int j = 1; j < n; j++)
     {
       table_entries.emplace_back (int_to_string (m_M_start * pow_i (m_x_multiplier, j - 1)));
@@ -58,6 +62,17 @@ void solver_checker::print_table (const std::vector<std::string> &table_entries,
 
   std::vector<int> cols_width (n, -1);
 
+  std::string latex_config = "|";
+  for (int i = 0; i < n; i++)
+    latex_config += "c|";
+
+  if (m_latex_format)
+    {
+      fprintf (fout, "\\begin{center}\n"
+                     "\\begin{tabular}{%s}\n"
+                     "\\hline \n", latex_config.c_str ());
+    }
+
   for (int j = 0; j < n; j++)
     {
       for (int i = 0; i < n; i++)
@@ -73,7 +88,8 @@ void solver_checker::print_table (const std::vector<std::string> &table_entries,
 
   for (int i = 0; i < n; i++)
     {
-      fprintf (fout, "|");
+      if (!m_latex_format)
+        fprintf (fout, "%s", format_divider ().c_str ());
       for (int j = 0; j < n; j++)
         {
           int spaces_sum = cols_width[j] - isize (table_entries[i * n + j]);
@@ -90,9 +106,16 @@ void solver_checker::print_table (const std::vector<std::string> &table_entries,
           for (int s = 0; s < spaces_right; s++)
             fprintf (fout, " ");
 
-          fprintf (fout, "|");
+          if (j != n - 1 || !m_latex_format)
+            fprintf (fout, "%s", format_divider ().c_str ());
         }
-      fprintf (fout, "\n");
+      fprintf (fout, "%s", format_newline ().c_str ());
+    }
+
+  if (m_latex_format)
+    {
+      fprintf (fout, "\\end{tabular}\n"
+                     "\\end{center}\n");
     }
 }
 
@@ -288,12 +311,24 @@ void solver_checker::start_testing (difference_scheme_solver &solver, double X, 
         }
     }
   print_testing_config ();
+  if (!m_latex_format)
+    {
   print_table ("g C norms", G_C_norms, fout);
   print_table ("g L2 norms", G_L2_norms, fout);
   print_table ("g W21 norms", G_W21_norms, fout);
   print_table ("v C norms", V_C_norms, fout);
   print_table ("v L2 norms", V_L2_norms, fout);
   print_table ("v W21 norms", V_W21_norms, fout);
+    }
+  else
+    {
+      print_table ("$||G_m^n - g (\\tau n, hm)||_C$", G_C_norms, fout);
+      print_table ("$||G_m^n - g (\\tau n, hm)||_{L2_h}$", G_L2_norms, fout);
+      print_table ("$||G_m^n - g (\\tau n, hm)||_{W_2^1}$", G_W21_norms, fout);
+      print_table ("$||V_m^n - u (\\tau n, hm)||_C$", V_C_norms, fout);
+      print_table ("$||V_m^n - u (\\tau n, hm)||_{L2_h}$", V_L2_norms, fout);
+      print_table ("$||V_m^n - u (\\tau n, hm)||_{W_2^1}$", V_W21_norms, fout);
+    }
 }
 
 std::string solver_checker::double_to_string (double d)
@@ -342,4 +377,20 @@ int solver_checker::pow_i (int x, int y)
     retval *= x;
 
   return retval;
+}
+
+std::string solver_checker::format_divider () const
+{
+  if (m_latex_format)
+    return "&";
+  else
+    return "|";
+}
+
+std::string solver_checker::format_newline () const
+{
+  if (m_latex_format)
+    return "\\\\ \n \\hline \n";
+  else
+    return "\n";
 }

@@ -27,7 +27,7 @@
 $$
 \begin{cases} 
 \displaystyle{\frac{\partial \rho}{\partial t} +
- \frac{\partial \rho u}{\partial x} = 0}, \\
+ \frac{\partial \rho u}{\partial x} = f_0}, \\
 
 \displaystyle{\rho \frac{\partial u}{\partial t} +
  \rho u \frac{\partial u}{\partial x}+ 
@@ -41,7 +41,7 @@ $$
 $
 p = p (\rho)
 $ - известная функция давления от плотности. 
-
+$f_0 \equiv 0, $
 $f$ - известная функция от $(t, x)$.
 \end{center}
 $$\mu \in [0,001; 0,1]$$
@@ -63,7 +63,7 @@ $$(\rho, u)|_{t=0} = (\rho_0, u_0), x \in [0, X]$$
 
 $$
 \begin{cases}
-\displaystyle{\frac{\partial g}{\partial t} + \frac{1}{2} \left(u\frac{\partial g}{\partial x} +     \frac{\partial ug}{\partial x} +(2-g)\frac{\partial u}{\partial x}\right) = 0},\\
+\displaystyle{\frac{\partial g}{\partial t} + \frac{1}{2} \left(u\frac{\partial g}{\partial x} +     \frac{\partial ug}{\partial x} +(2-g)\frac{\partial u}{\partial x}\right) = f_0},\\
 \displaystyle{\frac{\partial u}
 {\partial t} + \frac{1}{3} \left(u 
 \frac{\partial u}{\partial x} +
@@ -163,5 +163,120 @@ $m$, пробегая в уравнении $(4)$ значения от $1$ до
 Последовательно решая такие СЛАУ для $1 \leqslant n \leqslant N$, получим значения $G$ и $V$ во всех узлах сетки.
 
 \section{Результаты тестовых расчетов для гладких решений}
+Для проверки реализованного на ЭВМ алгоритма сделаем следующее.
+\begin{enumerate}
+\item Положим 
+$$
+\begin{cases}
+\rho (t, x) = e^t (\cos (\pi x / 10) + 1.5), \\
+u (t, x) = \cos (2 \pi t) \sin (\pi (x/10)^2).
+\end{cases}
+$$
+\item Аналитически вычислим $f_0$ и $f$ поставленной дифференциальной задачи с такими $\rho$ и $u$.
+\item Сравним значения функций $g (t, x) = \ln (\rho (t, x))$ и $u$ в узлах сетки, вычисленные алгоритмом со значениями, вычисленными аналитически.
+\end{enumerate}
+Рассмотрим нормы невязок скорости и плотности на последнем слое и их динамику при изменении шага сетки.
+\enlargethispage{5\baselineskip}\\
 
+$||G_m^n - g (\tau n, hm)||_C$:
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline 
+ N\textbackslash M &      20      &      60      &     180      &     540      \\ 
+ \hline 
+        20         & 3,362763e-03 & 6,904808e-03 & 7,248479e-03 & 7,287653e-03 \\ 
+ \hline 
+        60         & 1,424766e-03 & 1,641603e-03 & 1,932583e-03 & 1,967819e-03 \\ 
+ \hline 
+        180        & 2,576837e-03 & 2,758106e-04 & 5,668744e-04 & 6,014177e-04 \\ 
+ \hline 
+        540        & 2,916249e-03 & 1,400972e-04 & 1,573306e-04 & 1,919499e-04 \\ 
+ \hline 
+\end{tabular}
+\end{center}
+
+$||G_m^n - g (\tau n, hm)||_{L2_h}$:
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline 
+ N\textbackslash M &      20      &      60      &     180      &     540      \\ 
+ \hline 
+        20         & 5,557584e-03 & 6,769331e-03 & 6,772578e-03 & 6,721444e-03 \\ 
+ \hline 
+        60         & 1,396404e-03 & 1,638533e-03 & 1,861853e-03 & 1,872744e-03 \\ 
+ \hline 
+        180        & 2,464337e-03 & 4,534565e-04 & 6,725535e-04 & 6,949450e-04 \\ 
+ \hline 
+        540        & 2,847338e-03 & 1,578137e-04 & 2,164430e-04 & 2,405244e-04 \\ 
+ \hline 
+\end{tabular}
+\end{center}
+
+$||G_m^n - g (\tau n, hm)||_{W_2^1}$:
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline 
+ N\textbackslash M &      20      &      60      &     180      &     540      \\ 
+ \hline 
+        20         & 1,136667e-02 & 9,072672e-03 & 8,801006e-03 & 8,703443e-03 \\ 
+ \hline 
+        60         & 8,457332e-03 & 3,237552e-03 & 2,976311e-03 & 2,959965e-03 \\ 
+ \hline 
+        180        & 8,482201e-03 & 1,756316e-03 & 1,106216e-03 & 1,084601e-03 \\ 
+ \hline 
+        540        & 8,574849e-03 & 1,478489e-03 & 4,476420e-04 & 3,764018e-04 \\ 
+ \hline 
+\end{tabular}
+\end{center}
+
+$||V_m^n - u (\tau n, hm)||_C$:
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline 
+ N\textbackslash M &      20      &      60      &     180      &     540      \\ 
+ \hline 
+        20         & 4,468816e-03 & 4,320572e-03 & 4,391831e-03 & 4,402297e-03 \\ 
+ \hline 
+        60         & 2,274610e-03 & 2,065016e-03 & 2,338842e-03 & 2,372508e-03 \\ 
+ \hline 
+        180        & 3,366699e-03 & 6,409690e-04 & 8,794924e-04 & 9,151004e-04 \\ 
+ \hline 
+        540        & 3,848622e-03 & 1,976056e-04 & 2,818159e-04 & 3,165054e-04 \\ 
+ \hline 
+\end{tabular}
+\end{center}
+
+$||V_m^n - u (\tau n, hm)||_{L2_h}$:
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline 
+ N\textbackslash M &      20      &      60      &     180      &     540      \\ 
+ \hline 
+        20         & 7,078412e-03 & 7,252476e-03 & 7,459118e-03 & 7,483797e-03 \\ 
+ \hline 
+        60         & 3,487132e-03 & 3,275770e-03 & 3,623278e-03 & 3,663961e-03 \\ 
+ \hline 
+        180        & 4,084412e-03 & 1,008701e-03 & 1,337205e-03 & 1,379699e-03 \\ 
+ \hline 
+        540        & 4,679689e-03 & 3,338699e-04 & 4,329982e-04 & 4,749383e-04 \\ 
+ \hline 
+\end{tabular}
+\end{center}
+
+$||V_m^n - u (\tau n, hm)||_{W_2^1}$:
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline 
+ N\textbackslash M &      20      &      60      &     180      &     540      \\ 
+ \hline 
+        20         & 1,602271e-02 & 8,270292e-03 & 8,606246e-03 & 8,665422e-03 \\ 
+ \hline 
+        60         & 1,488460e-02 & 4,022029e-03 & 4,374032e-03 & 4,474257e-03 \\ 
+ \hline 
+        180        & 1,596604e-02 & 2,403521e-03 & 1,641375e-03 & 1,709770e-03 \\ 
+ \hline 
+        540        & 1,654288e-02 & 2,447612e-03 & 6,304648e-04 & 5,906696e-04 \\ 
+ \hline 
+\end{tabular}
+\end{center}
 \end{document}

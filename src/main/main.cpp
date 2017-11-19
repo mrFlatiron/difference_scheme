@@ -9,18 +9,29 @@
 int main (int argc, char *argv[])
 {
 
-  QApplication app (argc, argv);
+//  QApplication app (argc, argv);
 
-  main_window w;
+//  main_window w;
 
-  w.show ();
+//  w.show ();
 
-  return app.exec ();
+//  return app.exec ();
 
-//  difference_scheme_solver solver;
+  setlocale (LC_ALL, "Russian");
 
-//  solver_checker checker (2, 2, 640, 20, 1);
+  difference_scheme_solver solver;
 
-//  checker.start_testing (solver, M_PI, 1, mu_const);
+  solver_checker checker (3, 3, 20, 20, 4, true);
+
+  FILE *file = fopen ("tex.out", "w");
+  if (!file)
+    {
+      DEBUG_PAUSE ("Something wrong");
+      return 0;
+    }
+
+  checker.start_testing (solver, 10, 1, mu_const, file);
+
+  fclose (file);
   return 0;
 }
