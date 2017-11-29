@@ -292,7 +292,7 @@ void solver_checker::start_testing (difference_scheme_solver &solver, double X, 
         {
           solver.reset (m_M_start * pow_i (m_x_multiplier, mexp),
                         m_N_start * pow_i (m_t_multiplier, nexp),
-                        m_X, m_T, mu);
+                        m_X, m_T, mu, false);
           if (solver.state () != solver_state::ready)
             {
               DEBUG_PAUSE ("Some shit happened");
@@ -322,10 +322,10 @@ void solver_checker::start_testing (difference_scheme_solver &solver, double X, 
     }
   else
     {
-      print_table ("$||G_m^n - g (\\tau n, hm)||_C$", G_C_norms, fout);
+      print_table ("$||G_m^n - g (\\tau n, hm)||_{C_h}$", G_C_norms, fout);
       print_table ("$||G_m^n - g (\\tau n, hm)||_{L2_h}$", G_L2_norms, fout);
       print_table ("$||G_m^n - g (\\tau n, hm)||_{W_2^1}$", G_W21_norms, fout);
-      print_table ("$||V_m^n - u (\\tau n, hm)||_C$", V_C_norms, fout);
+      print_table ("$||V_m^n - u (\\tau n, hm)||_{C_h}$", V_C_norms, fout);
       print_table ("$||V_m^n - u (\\tau n, hm)||_{L2_h}$", V_L2_norms, fout);
       print_table ("$||V_m^n - u (\\tau n, hm)||_{W_2^1}$", V_W21_norms, fout);
     }

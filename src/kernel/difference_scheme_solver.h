@@ -26,13 +26,15 @@ private:
   scheme_iter_data m_iter_data;
   int m_last_computed_layer;
   bool m_enable_printing = true;
+  bool m_until_stab = false;
+  double m_stab_precision = 1e-2;
 public:
   difference_scheme_solver ();
   ~difference_scheme_solver ();
 
-  difference_scheme_solver (int M, int N, double X, double T, double mu);
+  difference_scheme_solver (int M, int N, double X, double T, double mu, bool until_stab = false);
 
-  void reset (int M, int N, double X, double T, double mu);
+  void reset (int M, int N, double X, double T, double mu, bool until_stab);
 
   void solve ();
 
@@ -101,6 +103,8 @@ private:
   double layer_norm (const int n) const; // ||e^(-G)||_C
 
   double gas_mass_local (int n, int m) const;
+
+  bool check_stabilized () const;
 };
 
 #endif // DIFFERENCE_SCHEME_SOLVER_H

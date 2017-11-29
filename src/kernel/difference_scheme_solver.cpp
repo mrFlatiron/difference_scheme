@@ -22,27 +22,37 @@ difference_scheme_solver::~difference_scheme_solver ()
 
 }
 
-void difference_scheme_solver::reset (int M, int N, double X, double T, double mu)
+void difference_scheme_solver::reset (int M, int N, double X, double T, double mu, bool until_stab)
 {
   m_M = M;
   m_N = N;
   m_X = X;
   m_T = T;
   m_mu = mu;
+  m_until_stab = until_stab;
   m_state = solver_state::invalid;
   init ();
 }
 
-difference_scheme_solver::difference_scheme_solver (int M, int N, double X, double T, double mu)
+difference_scheme_solver::difference_scheme_solver (int M, int N, double X, double T, double mu, bool until_stab)
 {
-  reset (M, N, X, T, mu);
+  reset (M, N, X, T, mu, until_stab);
 }
 
 void difference_scheme_solver::solve ()
 {
   m_state = solver_state::in_progress;
-  for (int i = 0; i < m_N; i++)
+
+  int i = 0;
+
+  while ((m_until_stab && !check_stabilized ()) || (!m_until_stab && i < m_N))
     {
+      if (m_until_stab)
+        {
+          auto size = isize (m_V);
+          m_V.resize (size + m_M + 1);
+          m_G.resize (size + m_M + 1);
+        }
       make_first_system ();
       make_second_system ();
       merge_systems ();
@@ -51,6 +61,12 @@ void difference_scheme_solver::solve ()
         return;
       m_last_computed_layer = m_iter_data.iter ();
       m_iter_data.inc_iter ();
+      i++;
+    }
+  if (m_until_stab)
+    {
+      m_T = i * m_t;
+      m_N = i;
     }
   m_state = solver_state::solved;
 }
@@ -62,6 +78,8 @@ double difference_scheme_solver::g_val (const int n, const int m) const
 
 double difference_scheme_solver::u_val (const int n, const int m) const
 {
+  if (m == 0 || m == m_M)
+    return 0;
   return get_V_layer (n)[m];
 }
 
@@ -194,8 +212,8 @@ void difference_scheme_solver::make_second_system ()
       if (m != m_M - 1)
         set_coef ({net_func::V}, row, m + 1, v_val (n, m) / (3 * m_h) - (m_mu * layer_norm (n)) / (m_h * m_h));
 
-      set_coef (net_func::G, row, m - 1, -(p_wave_deriv (g_val (n, m))) / (2 * m_h));
-      set_coef (net_func::G, row, m + 1, (p_wave_deriv (g_val (n, m))) / (2 * m_h));
+      set_coef (net_func::G, row, m - 1, -(p_wave_deriv (exp (g_val (n, m)))) / (2 * m_h));
+      set_coef (net_func::G, row, m + 1, (p_wave_deriv (exp (g_val (n, m)))) / (2 * m_h));
       set_rhs_val (row, f1 (n * m_t, m * m_h) -
                    deriv_x ({net_func::V}, {deriv_type::fw, deriv_type::bw}, n, m) * (
                      m_mu * layer_norm (n) - m_mu * exp (-g_val (n, m))) + v_val (n, m) / m_t);
@@ -253,13 +271,31 @@ void difference_scheme_solver::init ()
     }
 
   m_h = m_X / m_M;
-  m_t = m_T / m_N;
 
-  m_G.resize (nodes_count ());
-  m_V.resize (nodes_count ());
+  if (!m_until_stab)
+    {
+      m_t = m_T / m_N;
+    }
+  else
+    {
+      m_t = 0.001;
+    }
+
+  if (!m_until_stab)
+    {
+      m_G.resize (nodes_count ());
+      m_V.resize (nodes_count ());
+    }
+  else
+    {
+      m_G.resize (m_M + 1);
+      m_V.resize (m_M + 1);
+    }
 
   fill_zero_layer ();
-  fill_V_borders ();
+
+  if (!m_until_stab)
+    fill_V_borders ();
 
   m_last_computed_layer = 0;
 
@@ -456,6 +492,48 @@ double difference_scheme_solver::gas_mass_local (int n, int m) const
     return 0;
 
   return exp (g_val (n, m)) * m_h;
+}
+
+bool difference_scheme_solver::check_stabilized () const
+{
+  if (m_last_computed_layer == 0)
+    return false;
+
+  double max = 0;
+  double min = 0;
+  bool max_set = false;
+  bool min_set = false;
+
+  if (m_state != solver_state::in_progress)
+    return false;
+
+  for (int m = 0; m < m_M; m++)
+    {
+      double val = g_val (m_last_computed_layer, m);
+      if (!max_set)
+        {
+          max = val;
+          max_set = true;
+        }
+      else
+        {
+          if (max < val)
+            max = val;
+        }
+
+      if (!min_set)
+        {
+          min = val;
+          min_set = true;
+        }
+      else
+        {
+          if (min > val)
+            min = val;
+        }
+    }
+
+  return max - min < m_stab_precision;
 }
 
 int difference_scheme_solver::nodes_count () const

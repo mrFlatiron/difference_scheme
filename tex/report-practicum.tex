@@ -1,11 +1,15 @@
-\documentclass[11pt]{article}
+\documentclass[a4paper, 11pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[russian]{babel}
 \usepackage{amssymb}
 \usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{float}
+
 \newcommand{\w}{\widetilde}
-\voffset = -2cm 
-\footskip=200pt
+
+\voffset = -1cm 
+\footskip=100pt
 \hoffset = -1cm
 
 \newcommand{\wide}{
@@ -169,7 +173,9 @@ $m$, пробегая в уравнении $(4)$ значения от $1$ до
 $$
 \begin{cases}
 \rho (t, x) = e^t (\cos (\pi x / 10) + 1.5), \\
-u (t, x) = \cos (2 \pi t) \sin (\pi (x/10)^2).
+u (t, x) = \cos (2 \pi t) \sin (\pi (x/10)^2), \\
+\tilde{p}' = 1, \\
+\mu =  0,001.
 \end{cases}
 $$
 \item Аналитически вычислим $f_0$ и $f$ поставленной дифференциальной задачи с такими $\rho$ и $u$.
@@ -178,105 +184,223 @@ $$
 Рассмотрим нормы невязок скорости и плотности на последнем слое и их динамику при изменении шага сетки.
 \enlargethispage{5\baselineskip}\\
 
-$||G_m^n - g (\tau n, hm)||_C$:
+$||G_m^n - g (\tau n, hm)||_{C_h}$:
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|}
 \hline 
- N\textbackslash M &      20      &      60      &     180      &     540      \\ 
+ N\textbackslash M &      20      &      40      &      80      &     160      \\ 
  \hline 
-        20         & 3,362763e-03 & 6,904808e-03 & 7,248479e-03 & 7,287653e-03 \\ 
+        20         & 3,362763e-03 & 6,011030e-03 & 7,096117e-03 & 7,236886e-03 \\ 
  \hline 
-        60         & 1,424766e-03 & 1,641603e-03 & 1,932583e-03 & 1,967819e-03 \\ 
+        80         & 1,880232e-03 & 5,676989e-04 & 1,246442e-03 & 1,386106e-03 \\ 
  \hline 
-        180        & 2,576837e-03 & 2,758106e-04 & 5,668744e-04 & 6,014177e-04 \\ 
+        320        & 2,802104e-03 & 4,896486e-04 & 1,661393e-04 & 2,851023e-04 \\ 
  \hline 
-        540        & 2,916249e-03 & 1,400972e-04 & 1,573306e-04 & 1,919499e-04 \\ 
+       1280        & 3,010187e-03 & 7,215251e-04 & 1,136553e-04 & 4,505472e-05 \\ 
  \hline 
 \end{tabular}
 \end{center}
-
 $||G_m^n - g (\tau n, hm)||_{L2_h}$:
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|}
 \hline 
- N\textbackslash M &      20      &      60      &     180      &     540      \\ 
+ N\textbackslash M &      20      &      40      &      80      &     160      \\ 
  \hline 
-        20         & 5,557584e-03 & 6,769331e-03 & 6,772578e-03 & 6,721444e-03 \\ 
+        20         & 5,557584e-03 & 6,537687e-03 & 6,800276e-03 & 6,779306e-03 \\ 
  \hline 
-        60         & 1,396404e-03 & 1,638533e-03 & 1,861853e-03 & 1,872744e-03 \\ 
+        80         & 1,778678e-03 & 8,423468e-04 & 1,323880e-03 & 1,430520e-03 \\ 
  \hline 
-        180        & 2,464337e-03 & 4,534565e-04 & 6,725535e-04 & 6,949450e-04 \\ 
+        320        & 2,713867e-03 & 4,234380e-04 & 2,703903e-04 & 3,703753e-04 \\ 
  \hline 
-        540        & 2,847338e-03 & 1,578137e-04 & 2,164430e-04 & 2,405244e-04 \\ 
+       1280        & 2,961370e-03 & 6,407478e-04 & 1,004257e-04 & 7,166092e-05 \\ 
  \hline 
 \end{tabular}
 \end{center}
-
 $||G_m^n - g (\tau n, hm)||_{W_2^1}$:
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|}
 \hline 
- N\textbackslash M &      20      &      60      &     180      &     540      \\ 
+ N\textbackslash M &      20      &      40      &      80      &     160      \\ 
  \hline 
-        20         & 1,136667e-02 & 9,072672e-03 & 8,801006e-03 & 8,703443e-03 \\ 
+        20         & 1,136667e-02 & 9,124210e-03 & 8,964636e-03 & 8,817623e-03 \\ 
  \hline 
-        60         & 8,457332e-03 & 3,237552e-03 & 2,976311e-03 & 2,959965e-03 \\ 
+        80         & 8,425275e-03 & 3,368378e-03 & 2,423212e-03 & 2,311330e-03 \\ 
  \hline 
-        180        & 8,482201e-03 & 1,756316e-03 & 1,106216e-03 & 1,084601e-03 \\ 
+        320        & 8,537628e-03 & 2,798925e-03 & 1,073595e-03 & 6,855815e-04 \\ 
  \hline 
-        540        & 8,574849e-03 & 1,478489e-03 & 4,476420e-04 & 3,764018e-04 \\ 
+       1280        & 8,610764e-03 & 2,792095e-03 & 9,235949e-04 & 3,470701e-04 \\ 
  \hline 
 \end{tabular}
 \end{center}
-
-$||V_m^n - u (\tau n, hm)||_C$:
+$||V_m^n - u (\tau n, hm)||_{C_h}$:
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|}
 \hline 
- N\textbackslash M &      20      &      60      &     180      &     540      \\ 
+ N\textbackslash M &      20      &      40      &      80      &     160      \\ 
  \hline 
-        20         & 4,468816e-03 & 4,320572e-03 & 4,391831e-03 & 4,402297e-03 \\ 
+        20         & 4,468816e-03 & 4,268340e-03 & 4,351276e-03 & 4,389003e-03 \\ 
  \hline 
-        60         & 2,274610e-03 & 2,065016e-03 & 2,338842e-03 & 2,372508e-03 \\ 
+        80         & 2,622438e-03 & 1,336355e-03 & 1,699522e-03 & 1,839407e-03 \\ 
  \hline 
-        180        & 3,366699e-03 & 6,409690e-04 & 8,794924e-04 & 9,151004e-04 \\ 
+        320        & 3,676246e-03 & 5,604782e-04 & 3,710596e-04 & 4,832500e-04 \\ 
  \hline 
-        540        & 3,848622e-03 & 1,976056e-04 & 2,818159e-04 & 3,165054e-04 \\ 
+       1280        & 3,999036e-03 & 8,878083e-04 & 1,334016e-04 & 9,542056e-05 \\ 
  \hline 
 \end{tabular}
 \end{center}
-
 $||V_m^n - u (\tau n, hm)||_{L2_h}$:
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|}
 \hline 
- N\textbackslash M &      20      &      60      &     180      &     540      \\ 
+ N\textbackslash M &      20      &      40      &      80      &     160      \\ 
  \hline 
-        20         & 7,078412e-03 & 7,252476e-03 & 7,459118e-03 & 7,483797e-03 \\ 
+        20         & 7,078412e-03 & 7,015676e-03 & 7,350591e-03 & 7,451807e-03 \\ 
  \hline 
-        60         & 3,487132e-03 & 3,275770e-03 & 3,623278e-03 & 3,663961e-03 \\ 
+        80         & 3,496533e-03 & 2,095983e-03 & 2,655382e-03 & 2,826796e-03 \\ 
  \hline 
-        180        & 4,084412e-03 & 1,008701e-03 & 1,337205e-03 & 1,379699e-03 \\ 
+        320        & 4,455167e-03 & 7,794411e-04 & 5,839730e-04 & 7,395209e-04 \\ 
  \hline 
-        540        & 4,679689e-03 & 3,338699e-04 & 4,329982e-04 & 4,749383e-04 \\ 
+       1280        & 4,883520e-03 & 1,085492e-03 & 1,899382e-04 & 1,501232e-04 \\ 
  \hline 
 \end{tabular}
 \end{center}
-
 $||V_m^n - u (\tau n, hm)||_{W_2^1}$:
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|}
 \hline 
- N\textbackslash M &      20      &      60      &     180      &     540      \\ 
+ N\textbackslash M &      20      &      40      &      80      &     160      \\ 
  \hline 
-        20         & 1,602271e-02 & 8,270292e-03 & 8,606246e-03 & 8,665422e-03 \\ 
+        20         & 1,602271e-02 & 8,410281e-03 & 8,402222e-03 & 8,590046e-03 \\ 
  \hline 
-        60         & 1,488460e-02 & 4,022029e-03 & 4,374032e-03 & 4,474257e-03 \\ 
+        80         & 1,518330e-02 & 4,503082e-03 & 3,239430e-03 & 3,419199e-03 \\ 
  \hline 
-        180        & 1,596604e-02 & 2,403521e-03 & 1,641375e-03 & 1,709770e-03 \\ 
+        320        & 1,633145e-02 & 4,786022e-03 & 1,538671e-03 & 9,706054e-04 \\ 
  \hline 
-        540        & 1,654288e-02 & 2,447612e-03 & 6,304648e-04 & 5,906696e-04 \\ 
+       1280        & 1,673155e-02 & 5,113734e-03 & 1,570499e-03 & 5,209392e-04 \\ 
  \hline 
 \end{tabular}
 \end{center}
+
+Динамикой падения невязок подтверждается сходимость решения порядка $\tau + h^2$
+\enlargethispage{7\baselineskip}\\
+
+\section{Результаты расчетов для негладких начальных данных}
+Решим 2 задачи с негладкими начальными данными.
+\begin{equation}
+\begin{split}
+& f_0 \equiv  0, \\
+& f_1  \equiv 0, \\
+& \tilde{p}' = 1
+\end{split}
+\end{equation}
+
+$$
+(1)\quad \quad
+\begin{cases}
+\rho_0(x) = 1, \quad x < 4,5 \text{ или } x > 5,5,\\
+\rho_0(x) = 2, \quad x \in [4,5; 5,5],\\
+u_0(x) \equiv 0, \quad x \in [0; 10],\\
+u(t, 0) = u(t, 10) = 0, \quad t \in [0; 1], \\
+& \mu =  0,001, \\
+\end{cases}
+$$
+
+$$
+(2)\quad \quad
+\begin{cases}
+u_0(x) = 0, \quad x < 4,5 \text{ или } x > 5,5,\\
+u_0(x) = 1, \quad x \in [4,5; 5,5],\\
+\rho_0(x) \equiv 1, \quad x \in [0; 10],\\
+u(t, 0) = u(t, 10) = 0, \quad t \in [0; T],\\
+& \mu =  0,1. \\
+\end{cases}
+$$
+Настройки алгоритма:
+$$
+M = 600,
+N = 600.
+$$
+Для задачи (1) получаем:
+\newpage
+\begin{figure}[h]
+	\begin{minipage}[h] {0.49\linewidth}
+		\includegraphics[width=1\linewidth]{p1/p1_t=0.png}
+	\end{minipage}
+	\begin{minipage}[h] {0.49\linewidth}
+		\includegraphics[width=1\linewidth]{p1/p1_t=0,16.png}
+	\end{minipage}
+	\begin{minipage}[h] {0.49\linewidth}
+		\includegraphics[width=1\linewidth]{p1/p1_t=0,465.png}
+	\end{minipage}
+		\begin{minipage}[h] {0.49\linewidth}
+		\includegraphics[width=1\linewidth]{p1/p1_t=0,611.png}
+	\end{minipage}
+	\end{figure}
+	\newpage
+\begin{figure}[h]
+	\begin{minipage}[h] {0.49\linewidth}
+		\includegraphics[width=1\linewidth]{p1/p1_t=0,78.png}
+	\end{minipage}
+	\begin{minipage}[h] {0.49\linewidth}
+		\includegraphics[width=1\linewidth]{p1/p1_t=1.png}
+	\end{minipage}
+	\caption{Графики плотности (верхний) и скорости (нижний)}
+\end{figure}
+Заметим, что закон сохранения масс выполнен, т.к. изменяется в пределах вычислительной погрешности.
+
+Для задачи (2) получаем:
+\begin{figure}[H]
+	\begin{minipage}[h] {0.49\linewidth}
+		\includegraphics[width=1\linewidth]{p2/p2_t=0.png}
+	\end{minipage}
+	\begin{minipage}[h] {0.49\linewidth}
+		\includegraphics[width=1\linewidth]{p2/p2_t=0,1.png}
+	\end{minipage}
+\end{figure}
+\begin{figure}[H]
+	\begin{minipage}[h] {0.49\linewidth}
+		\includegraphics[width=1\linewidth]{p2/p2_t=0,4.png}
+	\end{minipage}
+		\begin{minipage}[h] {0.49\linewidth}
+		\includegraphics[width=1\linewidth]{p2/p2_t=0,6.png}
+	\end{minipage}
+
+	\begin{minipage}[h] {0.49\linewidth}
+		\includegraphics[width=1\linewidth]{p2/p2_t=0,8.png}
+	\end{minipage}
+	\begin{minipage}[h] {0.49\linewidth}
+		\includegraphics[width=1\linewidth]{p2/p2_t=1.png}
+	\end{minipage}
+	\caption{Графики плотности (верхний) и скорости (нижний)}
+\end{figure}
+Закон сохранения массы так же выполнен.
+
+\section{Зависимость точности полученного решения от коэффициента вязкости газа}
+
+\begin{tabular}{|l|c|c|c|}
+\hline
+норма $\backslash \ \mu$ 					& 0.001      & 0.01       & 0.1 \\
+\hline
+$\|G_m^n - g (\tau n, hm)|_{C_h}$ 			& 2,584176e-04 & 3,700739e-04 & 2,817834e-03 \\
+\hline
+$\|G_m^n - g (\tau n, hm)|_{L_{2,h}}$ 		& 3,207805e-04 & 4,151149e-04 & 2,019011e-03 \\
+\hline
+$\|G_m^n - g (\tau n, hm)|_2^1$ 			& 5,062162e-04 & 7,514924e-04 & 5,873506e-03 \\
+\hline
+$\|V_m^n - u (\tau n, hm)|_{C_h}$ 			& 4,216830e-04 & 4,278619e-04 & 2,062970e-03 \\
+\hline
+$\|V_m^n - u (\tau n, hm)|_{L_{2,h}}$ 		& 6,341970e-04 & 6,255225e-04 & 1,524787e-03 \\
+\hline
+$\|V_m^n - u (\tau n, hm)|_2^1$ 			& 7,866074e-04 & 8,754409e-04 & 5,837614e-03 \\
+\hline
+\end{tabular}\\
+
+\section{Стабилизация газа на негладких начальных условиях}
+Интересно построить решение разностной схемы на области, неограниченной по времени. Вместо этого критерием окончания итеративного процесса, может являться достаточно малая разность между максимальным и минимальным значением плотности газа на $[0, X]$. Приведем графические результаты работы алгоритма на задаче (4.1) с критерием для плотности $\varepsilon = 10^-2$.
+\begin{figure}[H]
+	\includegraphics[width=1\linewidth]{p3/p3_rho_t=46,41.png}
+\end{figure}
+Отметим, что осцилляции в области начального скачка плотности являются малыми (порядка $0,01$) по сравнению со значениями плотности ($\rho \approx 1$), и являются следствием естественной погрешности алгоритма.
+
+
 \end{document}

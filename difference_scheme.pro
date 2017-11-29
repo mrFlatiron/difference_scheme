@@ -77,3 +77,5 @@ INCLUDEPATH += src
 
 
 LIBS += -pthread
+
+QMAKE_CXXFLAGS += -std=c++11 -fsignaling-nans

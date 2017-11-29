@@ -1,10 +1,14 @@
 #ifndef PRECOMPILED_HEADER_H
 #define PRECOMPILED_HEADER_H
 
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
 
 #include <stdio.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <cfenv>
 
 
 
