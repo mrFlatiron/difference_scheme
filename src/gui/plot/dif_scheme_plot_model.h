@@ -11,9 +11,9 @@ class dif_scheme_plot_model : public abstract_plot_model
 private:
   difference_scheme_solver *m_solver;
   int m_cut = 0;
-  net_func m_func = net_func::V;
+  grid_func m_func = grid_func::V;
 public:
-  dif_scheme_plot_model (difference_scheme_solver *solver = nullptr, net_func func = net_func::G);
+  dif_scheme_plot_model (difference_scheme_solver *solver = nullptr, grid_func func = grid_func::G);
   ~dif_scheme_plot_model ();
 
   virtual int graphs_count () const override;
@@ -28,7 +28,7 @@ public:
 
   void set_cut (int cut);
 
-  net_func func () const;
+  grid_func func () const;
 
 };
 

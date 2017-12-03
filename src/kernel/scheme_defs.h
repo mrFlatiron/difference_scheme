@@ -21,7 +21,7 @@ enum class variable
   t,
   x
 };
-enum class net_func
+enum class grid_func
 {
   G,
   V

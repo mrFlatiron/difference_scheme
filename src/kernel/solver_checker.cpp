@@ -119,7 +119,7 @@ void solver_checker::print_table (const std::vector<std::string> &table_entries,
     }
 }
 
-double solver_checker::net_dif_norm_C (const difference_scheme_solver &solver, net_func func) const
+double solver_checker::grid_dif_norm_C (const difference_scheme_solver &solver, grid_func func) const
 {
   int M = solver.M ();
   int N = solver.N ();
@@ -129,7 +129,7 @@ double solver_checker::net_dif_norm_C (const difference_scheme_solver &solver, n
   int n = N;
   switch (func)
     {
-    case net_func::G:
+    case grid_func::G:
       {
         for (int m = 0; m <= M; m++)
           {
@@ -139,7 +139,7 @@ double solver_checker::net_dif_norm_C (const difference_scheme_solver &solver, n
         return max;
       }
       break;
-    case net_func::V:
+    case grid_func::V:
       {
         for (int m = 1; m < M; m++)
           {
@@ -154,7 +154,7 @@ double solver_checker::net_dif_norm_C (const difference_scheme_solver &solver, n
   return 0;
 }
 
-double solver_checker::net_dif_norm_L2 (const difference_scheme_solver &solver, net_func func) const
+double solver_checker::grid_dif_norm_L2 (const difference_scheme_solver &solver, grid_func func) const
 {
   int M = solver.M ();
   int N = solver.N ();
@@ -164,7 +164,7 @@ double solver_checker::net_dif_norm_L2 (const difference_scheme_solver &solver, 
   int n = N;
   switch (func)
     {
-    case net_func::G:
+    case grid_func::G:
       {
         for (int m = 0; m <= M; m++)
           {
@@ -174,7 +174,7 @@ double solver_checker::net_dif_norm_L2 (const difference_scheme_solver &solver, 
         return sqrt (h * sum);
       }
       break;
-    case net_func::V:
+    case grid_func::V:
       {
         for (int m = 1; m < M; m++)
           {
@@ -189,7 +189,7 @@ double solver_checker::net_dif_norm_L2 (const difference_scheme_solver &solver, 
   return 0;
 }
 
-double solver_checker::net_dif_norm_L2h (const difference_scheme_solver &solver, net_func func) const
+double solver_checker::grid_dif_norm_L2h (const difference_scheme_solver &solver, grid_func func) const
 {
   int M = solver.M ();
   int N = solver.N ();
@@ -200,7 +200,7 @@ double solver_checker::net_dif_norm_L2h (const difference_scheme_solver &solver,
   int n = N;
   switch (func)
     {
-    case net_func::G:
+    case grid_func::G:
       {
         double val = fabs (solver.g_val (n, 0) - g (T, 0));
         sum += 0.5 * val * val * h;
@@ -215,7 +215,7 @@ double solver_checker::net_dif_norm_L2h (const difference_scheme_solver &solver,
         return sqrt (sum);
       }
       break;
-    case net_func::V:
+    case grid_func::V:
       {
         double val = fabs (solver.v_val (n, 0) - v (T, 0));
         sum += 0.5 * val * val * h;
@@ -235,13 +235,13 @@ double solver_checker::net_dif_norm_L2h (const difference_scheme_solver &solver,
   return 0;
 }
 
-double solver_checker::net_dif_norm_W21 (const difference_scheme_solver &solver, net_func func) const
+double solver_checker::grid_dif_norm_W21 (const difference_scheme_solver &solver, grid_func func) const
 {
-  return sqrt (net_dif_norm_L2h (solver, func) * net_dif_norm_L2h (solver, func) +
-               net_dif_seminorm (solver, func) * net_dif_seminorm (solver, func));
+  return sqrt (grid_dif_norm_L2h (solver, func) * grid_dif_norm_L2h (solver, func) +
+               grid_dif_seminorm (solver, func) * grid_dif_seminorm (solver, func));
 }
 
-double solver_checker::net_dif_seminorm (const difference_scheme_solver &solver, net_func func) const
+double solver_checker::grid_dif_seminorm (const difference_scheme_solver &solver, grid_func func) const
 {
   int M = solver.M ();
   int N = solver.N ();
@@ -254,9 +254,9 @@ double solver_checker::net_dif_seminorm (const difference_scheme_solver &solver,
   {
       switch (func)
         {
-        case net_func::G:
+        case grid_func::G:
           return deriv_g_x (t, x);
-        case net_func::V:
+        case grid_func::V:
           return deriv_v_x (t, x);
         }
       return 0.;
@@ -301,12 +301,12 @@ void solver_checker::start_testing (difference_scheme_solver &solver, double X, 
 
           solver.solve ();
 
-          G_C_norms.push_back (net_dif_norm_C  (solver, net_func::G));
-          G_L2_norms.push_back (net_dif_norm_L2 (solver, net_func::G));
-          G_W21_norms.push_back (net_dif_norm_W21 (solver, net_func::G));
-          V_C_norms.push_back (net_dif_norm_C  (solver, net_func::V));
-          V_L2_norms.push_back (net_dif_norm_L2 (solver, net_func::V));
-          V_W21_norms.push_back (net_dif_norm_W21 (solver, net_func::V));
+          G_C_norms.push_back (grid_dif_norm_C  (solver, grid_func::G));
+          G_L2_norms.push_back (grid_dif_norm_L2 (solver, grid_func::G));
+          G_W21_norms.push_back (grid_dif_norm_W21 (solver, grid_func::G));
+          V_C_norms.push_back (grid_dif_norm_C  (solver, grid_func::V));
+          V_L2_norms.push_back (grid_dif_norm_L2 (solver, grid_func::V));
+          V_W21_norms.push_back (grid_dif_norm_W21 (solver, grid_func::V));
 
         }
     }

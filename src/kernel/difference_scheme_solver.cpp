@@ -88,15 +88,15 @@ double difference_scheme_solver::v_val(const int n, const int m) const
   return u_val (n, m);
 }
 
-double difference_scheme_solver::val (const net_func func,
+double difference_scheme_solver::val (const grid_func func,
                                       const int n,
                                       const int m) const
 {
   switch (func)
     {
-    case net_func::G:
+    case grid_func::G:
       return g_val (n, m);
-    case net_func::V:
+    case grid_func::V:
       return u_val (n, m);
     }
   DEBUG_PAUSE ("Shouldn't happen");
@@ -111,7 +111,7 @@ double difference_scheme_solver::gas_mass (int n) const
   return sum;
 }
 
-double difference_scheme_solver::val (const net_func func, const scheme_point p) const
+double difference_scheme_solver::val (const grid_func func, const scheme_point p) const
 {
   return val (func, p.n (), p.m ());
 }
@@ -151,48 +151,64 @@ void difference_scheme_solver::make_first_system ()
   int row = 0; // row in system
   int m = 0;
   int n = m_last_computed_layer;
-  set_coef (net_func::G, row, 0, 1. / m_t + deriv_x ({net_func::V}, {deriv_type::fw}, n, 0) / 2);
-  set_coef (net_func::V, row, 1, 1. / m_h);
+  set_coef (grid_func::G, row, 0, 1. / m_t + deriv_x ({grid_func::V}, {deriv_type::fw}, n, 0) / 2);
+  set_coef (grid_func::V, row, 1, 1. / m_h);
   set_rhs_val (row,
                f0 (n * m_t, 0) + g_val (n , 0) / m_t +
                (m_h / 2) *
-               (deriv_x ({net_func::G, net_func::V}, {deriv_type::fw, deriv_type::bw}, n, 1) -
+               (deriv_x ({grid_func::G, grid_func::V}, {deriv_type::fw, deriv_type::bw}, n, 1) -
                    0.5 *
-                deriv_x ({net_func::G, net_func::V}, {deriv_type::fw, deriv_type::bw}, n, 2) +
-                (2 - g_val (n, 0)) * (deriv_x ({net_func::V}, {deriv_type::fw, deriv_type::bw}, n, 1) -
+                deriv_x ({grid_func::G, grid_func::V}, {deriv_type::fw, deriv_type::bw}, n, 2) +
+                (2 - g_val (n, 0)) * (deriv_x ({grid_func::V}, {deriv_type::fw, deriv_type::bw}, n, 1) -
                                          0.5 *
-                                         deriv_x ({net_func::V}, {deriv_type::fw, deriv_type::bw}, n, 2))) +
-               (g_val (n, 0) * deriv_x ({net_func::V}, {deriv_type::fw}, n, 0)) / 2);
+                                         deriv_x ({grid_func::V}, {deriv_type::fw, deriv_type::bw}, n, 2))) +
+               (g_val (n, 0) * deriv_x ({grid_func::V}, {deriv_type::fw}, n, 0)) / 2);
   row++;
   m++;
   for (; m < m_M; m++, row++)
     {
-      set_coef (net_func::G, row, m - 1, - v_val (n, m) / (2 * m_h));
-      set_coef (net_func::G, row, m    , (1 / m_t + 0.5 * deriv_x ({net_func::V}, {deriv_type::wide}, n, m)));
-      set_coef (net_func::G, row, m + 1, v_val (n, m) / (2 * m_h));
-
+      bool oscillation_supression = true;
+      double nu = 1;
+      if (!oscillation_supression)
+        {
+          set_coef (grid_func::G, row, m - 1, - v_val (n, m) / (2 * m_h));
+          set_coef (grid_func::G, row, m    , (1 / m_t + 0.5 * deriv_x ({grid_func::V}, {deriv_type::wide}, n, m)));
+          set_coef (grid_func::G, row, m + 1, v_val (n, m) / (2 * m_h));
+        }
+      else
+        {
+          double k1 = m_t * nu / m_h;
+          double k2 = 2 * v_val (n, m) * deriv_x ({grid_func::V}, {deriv_type::bw}, n, m);
+          double k3 = v_val (n, m) * v_val (n, m);
+          set_coef (grid_func::G, row, m - 1, - v_val (n, m) / (2 * m_h)
+                    - (k1 * (k2 + k3 / m_h)));
+          set_coef (grid_func::G, row, m    , (1 / m_t + 0.5 * deriv_x ({grid_func::V}, {deriv_type::wide}, n, m))
+                    + k1 * (k2 + 2 * k3 / m_h));
+          set_coef (grid_func::G, row, m + 1, v_val (n, m) / (2 * m_h)
+                    - k1 * k3 / m_h);
+        }
       if (m != m_M - 1)
-        set_coef (net_func::V, row, m + 1, 1 / (2 * m_h));
+        set_coef (grid_func::V, row, m + 1, 1 / (2 * m_h));
 
       if (m != 1)
-        set_coef (net_func::V, row, m - 1, - 1 / (2 * m_h));
+        set_coef (grid_func::V, row, m - 1, - 1 / (2 * m_h));
 
       set_rhs_val (row,
                    f0 (n * m_t, m * m_h) +
                    g_val (n, m) *
-                   (1 / m_t + 0.5 * deriv_x ({net_func::V}, {deriv_type::wide}, n, m)));
+                   (1 / m_t + 0.5 * deriv_x ({grid_func::V}, {deriv_type::wide}, n, m)));
     }
-  set_coef (net_func::G, row, m_M, 1. / m_t + deriv_x ({net_func::V}, {deriv_type::bw}, n, m_M) / 2);
-  set_coef (net_func::V, row, m_M - 1, - 1. / m_h);
+  set_coef (grid_func::G, row, m_M, 1. / m_t + deriv_x ({grid_func::V}, {deriv_type::bw}, n, m_M) / 2);
+  set_coef (grid_func::V, row, m_M - 1, - 1. / m_h);
   set_rhs_val (row,
                f0 (n * m_t, m_X) +
                g_val (n, m_M) / m_t +
-               (g_val (n, m_M) * deriv_x ({net_func::V}, {deriv_type::bw}, n, m_M)) / 2 -
-               (m_h / 2) * (deriv_x ({net_func::G, net_func::V}, {deriv_type::fw, deriv_type::bw}, n, m_M - 1) -
-                            0.5 * deriv_x ({net_func::G, net_func::V}, {deriv_type::fw, deriv_type::bw}, n, m_M - 2) +
+               (g_val (n, m_M) * deriv_x ({grid_func::V}, {deriv_type::bw}, n, m_M)) / 2 -
+               (m_h / 2) * (deriv_x ({grid_func::G, grid_func::V}, {deriv_type::fw, deriv_type::bw}, n, m_M - 1) -
+                            0.5 * deriv_x ({grid_func::G, grid_func::V}, {deriv_type::fw, deriv_type::bw}, n, m_M - 2) +
                             (2 - g_val (n, m_M)) * (
-                              deriv_x ({net_func::V}, {deriv_type::fw, deriv_type::bw}, n, m_M - 1) -
-                              0.5 * deriv_x ({net_func::V}, {deriv_type::fw, deriv_type::bw}, n, m_M - 2)))
+                              deriv_x ({grid_func::V}, {deriv_type::fw, deriv_type::bw}, n, m_M - 1) -
+                              0.5 * deriv_x ({grid_func::V}, {deriv_type::fw, deriv_type::bw}, n, m_M - 2)))
                );
 }
 
@@ -204,18 +220,18 @@ void difference_scheme_solver::make_second_system ()
   for (; m < m_M; m++, row++)
     {
       if (m != 1)
-        set_coef (net_func::V, row, m - 1, - v_val (n, m) / (3 * m_h) - (m_mu * layer_norm (n)) / (m_h * m_h));
+        set_coef (grid_func::V, row, m - 1, - v_val (n, m) / (3 * m_h) - (m_mu * layer_norm (n)) / (m_h * m_h));
 
-      set_coef (net_func::V, row, m, 1. / m_t + deriv_x ({net_func::V}, {deriv_type::wide}, n, m) / 3 +
+      set_coef (grid_func::V, row, m, 1. / m_t + deriv_x ({grid_func::V}, {deriv_type::wide}, n, m) / 3 +
                 (2 * m_mu * layer_norm (n)) / (m_h * m_h));
 
       if (m != m_M - 1)
-        set_coef ({net_func::V}, row, m + 1, v_val (n, m) / (3 * m_h) - (m_mu * layer_norm (n)) / (m_h * m_h));
+        set_coef ({grid_func::V}, row, m + 1, v_val (n, m) / (3 * m_h) - (m_mu * layer_norm (n)) / (m_h * m_h));
 
-      set_coef (net_func::G, row, m - 1, -(p_wave_deriv (exp (g_val (n, m)))) / (2 * m_h));
-      set_coef (net_func::G, row, m + 1, (p_wave_deriv (exp (g_val (n, m)))) / (2 * m_h));
+      set_coef (grid_func::G, row, m - 1, -(p_wave_deriv (exp (g_val (n, m)))) / (2 * m_h));
+      set_coef (grid_func::G, row, m + 1, (p_wave_deriv (exp (g_val (n, m)))) / (2 * m_h));
       set_rhs_val (row, f1 (n * m_t, m * m_h) -
-                   deriv_x ({net_func::V}, {deriv_type::fw, deriv_type::bw}, n, m) * (
+                   deriv_x ({grid_func::V}, {deriv_type::fw, deriv_type::bw}, n, m) * (
                      m_mu * layer_norm (n) - m_mu * exp (-g_val (n, m))) + v_val (n, m) / m_t);
     }
 }
@@ -346,7 +362,7 @@ void difference_scheme_solver::fill_V_borders ()
     }
 }
 
-double difference_scheme_solver::deriv (const std::vector<net_func> &product,
+double difference_scheme_solver::deriv (const std::vector<grid_func> &product,
                                         const std::vector<deriv_type> &types,
                                         const variable var,
                                         scheme_point p) const
@@ -378,7 +394,7 @@ double difference_scheme_solver::deriv (const std::vector<net_func> &product,
     }
   if (isize (product) == 1)
     {
-      net_func func = product[0];
+      grid_func func = product[0];
       switch (isize (types))
         {
         case 2:
@@ -405,17 +421,17 @@ double difference_scheme_solver::deriv (const std::vector<net_func> &product,
   return 0;
 }
 
-double difference_scheme_solver::deriv_x (const std::vector<net_func> &product, const std::vector<deriv_type> &types, const int n, const int m) const
+double difference_scheme_solver::deriv_x (const std::vector<grid_func> &product, const std::vector<deriv_type> &types, const int n, const int m) const
 {
   return deriv (product, types, variable::x, scheme_point (n, m));
 }
 
-double difference_scheme_solver::deriv_t (const std::vector<net_func> &product, const std::vector<deriv_type> &types, const int n, const int m) const
+double difference_scheme_solver::deriv_t (const std::vector<grid_func> &product, const std::vector<deriv_type> &types, const int n, const int m) const
 {
   return deriv (product, types, variable::t, scheme_point (n, m));
 }
 
-double difference_scheme_solver::deriv_any (variable var, net_func f, int n, int m) const
+double difference_scheme_solver::deriv_any (variable var, grid_func f, int n, int m) const
 {
   int var_node;
 
@@ -439,15 +455,15 @@ double difference_scheme_solver::deriv_any (variable var, net_func f, int n, int
   return deriv ({f}, {deriv_type::wide}, var, sp);
 }
 
-void difference_scheme_solver::set_coef (const net_func f, const int row, const int m, const double val)
+void difference_scheme_solver::set_coef (const grid_func f, const int row, const int m, const double val)
 {
   int col;
   switch (f)
     {
-    case net_func::G:
+    case grid_func::G:
       col = m;
       break;
-    case net_func::V:
+    case grid_func::V:
       col = m_M + m; // (m_M + 1) + (m - 1)
     }
   if (!math_utils::eq (val, 0))
@@ -561,7 +577,7 @@ double difference_scheme_solver::T () const
   return m_T;
 }
 
-double difference_scheme_solver::deriv_any_x (net_func f, int n, int m) const
+double difference_scheme_solver::deriv_any_x (grid_func f, int n, int m) const
 {
   if (m < 0 || m > M ())
     {
@@ -573,7 +589,7 @@ double difference_scheme_solver::deriv_any_x (net_func f, int n, int m) const
 
 }
 
-double difference_scheme_solver::deriv_any_t(net_func f, int n, int m) const
+double difference_scheme_solver::deriv_any_t(grid_func f, int n, int m) const
 {
   if (n < 0 || n > N ())
     {

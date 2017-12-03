@@ -6,6 +6,8 @@
 \usepackage{graphicx}
 \usepackage{float}
 
+\usepackage{xcolor}
+
 \newcommand{\w}{\widetilde}
 
 \voffset = -1cm 
@@ -402,5 +404,24 @@ $\|V_m^n - u (\tau n, hm)|_2^1$ 			& 7,866074e-04 & 8,754409e-04 & 5,837614e-03 
 \end{figure}
 Отметим, что осцилляции в области начального скачка плотности являются малыми (порядка $0,01$) по сравнению со значениями плотности ($\rho \approx 1$), и являются следствием естественной погрешности алгоритма.
 
+\section{Искусственное погашение осцилляций плотности}
+Как видно из рисунка в разделе 6, скачок плотности в начальных условиях провоцирует малые осцилляции на участке скачка. Для погашения осцилляций изменим уравнение схемы (2.1) следующим образом:
+\\
 
+$
+\displaystyle{
+G_{m-1}^{n+1} \left(\frac{-V_{m}^n}{2h} \mathbin{\color{red}- \frac{\tau \eta}{h^2} (V_m^n)^2}\right) + G_m^{n+1} \left(\frac{1}{\tau} + \frac{1}{2}\left(V_{\wide}\right)_m^n \mathbin{\color{red}+ \frac{\tau \eta}{h} \left(2V_m^n (V_m^n)_{\overline{x}} + \frac{2}{h} (V_m^n)^2\right)}\right) +}\\
+\displaystyle{ +
+G_{m+1}^{n+1} \left(\frac{V_m^n}{2h} \mathbin{\color{red}- \frac{\tau \eta}{h}\left(2V_m^n (V_m^n)_{\overline{x}} +\frac{1}{h}(V_m^n)^2\right)}\right) + V_{m+1}^{n+1} \left(\frac{1}{2h}\right) + V_{m-1}^{n+1}\left(\frac{1}{2h}\right) =} \\
+\displaystyle{
+= 
+f_0 (n\tau, mh) + G_m^n \left(\frac{1}{\tau} 
++\frac{1}{2} \left(V_{\wide}\right)_m^n\right)
+,\ \ \  1 \leqslant m \leqslant M - 1}
+$
+
+Результаты расчета для задачи раздела 5 теперь выглядят так
+\begin{figure}[H]
+	\includegraphics[width=1\linewidth]{p3/p3_t=48_noscill.png}
+\end{figure}
 \end{document}

@@ -42,8 +42,8 @@ public:
   double u_val (const int n, const int m) const;
   double v_val (const int n, const int m) const;
 
-  double val (const net_func func, const int n, const int m) const;
-  double val (const net_func func, scheme_point p) const;
+  double val (const grid_func func, const int n, const int m) const;
+  double val (const grid_func func, scheme_point p) const;
 
   double gas_mass (int n) const;
 
@@ -57,8 +57,8 @@ public:
   double X () const;
   double T () const;
 
-  double deriv_any_x (net_func f, int n, int m) const;
-  double deriv_any_t (net_func f, int n, int m) const;
+  double deriv_any_x (grid_func f, int n, int m) const;
+  double deriv_any_t (grid_func f, int n, int m) const;
 
   void disable_printing ();
 private:
@@ -80,23 +80,23 @@ private:
 
 
   //for expample
-  //(GV)x\overline{x} = deriv ({net_func::G, net_func::V}, {deriv_type::fw, deriv_type::bw}, variable::x, scheme_point (n, m));
-  double deriv (const std::vector<net_func> &product,
+  //(GV)x\overline{x} = deriv ({grid_func::G, grid_func::V}, {deriv_type::fw, deriv_type::bw}, variable::x, scheme_point (n, m));
+  double deriv (const std::vector<grid_func> &product,
                 const std::vector<deriv_type> &types,
                 const variable var,
                 scheme_point p) const;
 
-  double deriv_x (const std::vector<net_func> &product,
+  double deriv_x (const std::vector<grid_func> &product,
                   const std::vector<deriv_type> &types,
                   const int n, const int m) const;
 
-  double deriv_t (const std::vector<net_func> &product,
+  double deriv_t (const std::vector<grid_func> &product,
                   const std::vector<deriv_type> &types,
                   const int n, const int m) const;
 
-  double deriv_any (variable var, net_func f, int n, int m) const;
+  double deriv_any (variable var, grid_func f, int n, int m) const;
 
-  void set_coef (const net_func f, const int row, const int m, const double val);
+  void set_coef (const grid_func f, const int row, const int m, const double val);
   void set_rhs_val (const int row, const double val);
   void set_computed (const laspack_vector &out);
 

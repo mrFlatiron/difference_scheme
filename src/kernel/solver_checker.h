@@ -4,7 +4,7 @@
 #include "precompiled/precompiled_header.h"
 
 class difference_scheme_solver;
-enum class net_func;
+enum class grid_func;
 
 class solver_checker
 {
@@ -29,11 +29,11 @@ public:
 
   void print_table (const std::vector<std::string> &table_entries, FILE *fout = stdout) const;
 
-  double net_dif_norm_C (const difference_scheme_solver &solver, net_func func) const;
-  double net_dif_norm_L2 (const difference_scheme_solver &solver, net_func func) const;
-  double net_dif_norm_L2h (const difference_scheme_solver &solver, net_func func) const;
-  double net_dif_norm_W21 (const difference_scheme_solver &solver, net_func func) const;
-  double net_dif_seminorm (const difference_scheme_solver &solver, net_func func) const;
+  double grid_dif_norm_C (const difference_scheme_solver &solver, grid_func func) const;
+  double grid_dif_norm_L2 (const difference_scheme_solver &solver, grid_func func) const;
+  double grid_dif_norm_L2h (const difference_scheme_solver &solver, grid_func func) const;
+  double grid_dif_norm_W21 (const difference_scheme_solver &solver, grid_func func) const;
+  double grid_dif_seminorm (const difference_scheme_solver &solver, grid_func func) const;
 
   void start_testing (difference_scheme_solver &solver, double X, double T, double mu, FILE *fout = stdout);
 
