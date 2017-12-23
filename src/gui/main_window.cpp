@@ -30,7 +30,7 @@ void main_window::create_widgets()
   int M = 800;
   int N = 800;
   double X = 10;
-  double T = 100;
+  double T = 60;
 
   m_painter_G = make_unique<graph_painter> ();
   m_painter_V = make_unique<graph_painter> ();

@@ -60,6 +60,10 @@ public:
   double deriv_any_x (grid_func f, int n, int m) const;
   double deriv_any_t (grid_func f, int n, int m) const;
 
+  double deriv_x (const std::vector<grid_func> &product,
+                  const std::vector<deriv_type> &types,
+                  const int n, const int m) const;
+
   void disable_printing ();
 private:
   void make_first_system ();
@@ -75,6 +79,8 @@ private:
   double *get_V_layer (const int layer);
   const double *get_V_layer (const int layer) const;
 
+  double product_val (const std::vector<grid_func> &product, scheme_point p) const;
+
   void fill_zero_layer ();
   void fill_V_borders ();
 
@@ -86,9 +92,14 @@ private:
                 const variable var,
                 scheme_point p) const;
 
-  double deriv_x (const std::vector<grid_func> &product,
-                  const std::vector<deriv_type> &types,
-                  const int n, const int m) const;
+  double deriv_v2 (const std::vector<grid_func> &product,
+                   const std::vector<deriv_type> &types,
+                   const variable var,
+                   scheme_point p) const;
+
+//  double deriv_x (const std::vector<grid_func> &product,
+//                  const std::vector<deriv_type> &types,
+//                  const int n, const int m) const;
 
   double deriv_t (const std::vector<grid_func> &product,
                   const std::vector<deriv_type> &types,

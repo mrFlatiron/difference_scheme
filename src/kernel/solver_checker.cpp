@@ -250,21 +250,21 @@ double solver_checker::grid_dif_seminorm (const difference_scheme_solver &solver
   double h = solver.var_incr (variable::x);
   double sum = 0;
 
-  auto wanted_deriv = [func] (double t, double x)
+  auto wanted_deriv = [func, h] (double t, double x)
   {
       switch (func)
         {
         case grid_func::G:
-          return deriv_g_x (t, x);
+          return (g (t, x + h) - g (t, x)) / h;
         case grid_func::V:
-          return deriv_v_x (t, x);
+          return (v (t, x + h) - v (t, x)) / h;
         }
       return 0.;
     };
 
   for (int m = 0; m < M; m++)
     {
-      double val = fabs (solver.deriv_any_x (func, N, m) - wanted_deriv (T, h * m));
+      double val = fabs (solver.deriv_x ({func}, {deriv_type::fw}, N, m) - wanted_deriv (T, h * m));
       sum += val * val * h;
     }
 

@@ -1,7 +1,7 @@
 #ifndef KNOWN_FUNCTIONS_H
 #define KNOWN_FUNCTIONS_H
 
-constexpr double mu_const = 0.1;
+constexpr double mu_const = 0.01;
 
 double f0 (const double t, const double x);
 double f1 (const double t, const double x);

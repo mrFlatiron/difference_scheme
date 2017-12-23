@@ -340,6 +340,16 @@ const double *difference_scheme_solver::get_V_layer (const int layer) const
   return m_V.data () + (m_M + 1) * layer;
 }
 
+double difference_scheme_solver::product_val (const std::vector<grid_func> &product, scheme_point p) const
+{
+  double pr = 1;
+
+  for (auto func : product)
+    pr *= val (func, p);
+
+  return pr;
+}
+
 void difference_scheme_solver::fill_zero_layer ()
 {
   double *g = get_G_layer (0);
@@ -421,19 +431,80 @@ double difference_scheme_solver::deriv (const std::vector<grid_func> &product,
   return 0;
 }
 
+double difference_scheme_solver::deriv_v2 (const std::vector<grid_func> &product,
+                                           const std::vector<deriv_type> &types,
+                                           const variable var,
+                                           scheme_point p) const
+{
+  int types_count = isize (types);
+  int func_count = isize (product);
+
+  if (types_count >= 3 ||
+      func_count >= 3)
+    {
+      DEBUG_PAUSE ("Not implemented");
+      return 0;
+    }
+
+
+  switch (types_count)
+    {
+    case 2:
+      if (!(types[0] == deriv_type::fw && types[1] == deriv_type::bw))
+        {
+          DEBUG_PAUSE ("Not implemented");
+          return 0;
+        }
+      return (product_val (product, p.inc (var)) -
+              2 * product_val (product, p) +
+              product_val (product, p.dec (var))) / (m_h * m_h);
+    case 1:
+      {
+        auto type = types[0];
+        switch (type)
+          {
+          case deriv_type::wide:
+            return (product_val (product, p.inc (var))
+                    - product_val (product, p.dec (var))) / (2 * m_h);
+
+          case deriv_type::bw:
+            return (product_val (product, p)
+                    -product_val (product, p.dec (var))) / (m_h);
+
+          case deriv_type::fw:
+            return (product_val (product, p.inc (var))
+                    - product_val (product, p)) / (m_h);
+          }
+      }
+    default:
+      DEBUG_PAUSE ("Shouldn't happen");
+      return 0;
+    }
+
+  return 0;
+}
+
 double difference_scheme_solver::deriv_x (const std::vector<grid_func> &product, const std::vector<deriv_type> &types, const int n, const int m) const
 {
-  return deriv (product, types, variable::x, scheme_point (n, m));
+//  return deriv (product, types, variable::x, scheme_point (n, m));
+//  double check = fabs (deriv (product, types, variable::x, scheme_point (n, m)) - deriv_v2 (product, types, variable::x, scheme_point (n, m)));
+//  (void)check;
+//  if (check > 1e-10)
+//    DEBUG_PAUSE ("Interesting");
+  return deriv_v2 (product, types, variable::x, scheme_point (n, m));
 }
 
 double difference_scheme_solver::deriv_t (const std::vector<grid_func> &product, const std::vector<deriv_type> &types, const int n, const int m) const
 {
-  return deriv (product, types, variable::t, scheme_point (n, m));
+//  return deriv (product, types, variable::t, scheme_point (n, m));
+//  double check = fabs (deriv (product, types, variable::t, scheme_point (n, m)) - deriv_v2 (product, types, variable::t, scheme_point (n, m)));
+//  (void)check;
+  return deriv_v2 (product, types, variable::t, scheme_point (n, m));
 }
 
 double difference_scheme_solver::deriv_any (variable var, grid_func f, int n, int m) const
 {
-  int var_node;
+  int var_node = 0;
 
   switch (var)
     {
