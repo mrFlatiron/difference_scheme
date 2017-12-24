@@ -8,30 +8,32 @@
 
 int main (int argc, char *argv[])
 {
-  feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW);
-//  QApplication app (argc, argv);
+  (void)argc;
+  (void)argv;
+//  feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW);
+  QApplication app (argc, argv);
 
-//  main_window w;
+  main_window w;
 
-//  w.show ();
+  w.show ();
 
-//  return app.exec ();
+  return app.exec ();
 
-  setlocale (LC_ALL, "Russian");
+//  setlocale (LC_ALL, "Russian");
 
-  difference_scheme_solver solver;
+//  difference_scheme_solver solver;
 
-  solver_checker checker (2, 4, 20, 20, 4, true);
+//  solver_checker checker (2, 4, 20, 20, 4, true);
 
-  FILE *file = fopen ("tex.out", "w");
-  if (!file)
-    {
-      DEBUG_PAUSE ("Something wrong");
-      return 0;
-    }
+//  FILE *file = fopen ("tex.out", "w");
+//  if (!file)
+//    {
+//      DEBUG_PAUSE ("Something wrong");
+//      return 0;
+//    }
 
-  checker.start_testing (solver, 10, 1, mu_const, file);
+//  checker.start_testing (solver, 10, 1, mu_const, file);
 
-  fclose (file);
+//  fclose (file);
   return 0;
 }

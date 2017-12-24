@@ -167,7 +167,7 @@ void difference_scheme_solver::make_first_system ()
   m++;
   for (; m < m_M; m++, row++)
     {
-      bool oscillation_supression = true;
+      bool oscillation_supression = false;
       double nu = 1;
       if (!oscillation_supression)
         {
