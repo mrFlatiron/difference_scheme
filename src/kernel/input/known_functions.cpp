@@ -26,6 +26,7 @@ double f1 (const double t, const double x)
 double p_wave_deriv (const double z)
 {
   (void)z;
+//  return 1;
   return 1.4 * pow (z, 0.4);
 }
 
